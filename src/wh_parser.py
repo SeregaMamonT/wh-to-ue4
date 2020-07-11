@@ -1,32 +1,7 @@
-import struct
-from typing import BinaryIO, List
+from typing import BinaryIO, List, Any, Callable
 
 from wh_binary_objects import Particle
-
-
-def bool1(file: BinaryIO):
-    return struct.unpack('?', file.read(1))[0]
-
-
-def int2(file: BinaryIO):
-    return struct.unpack('h', file.read(2))[0]
-
-
-def int4(file: BinaryIO):
-    return struct.unpack('i', file.read(4))[0]
-
-
-def int8(file: BinaryIO):
-    return struct.unpack('Q', file.read(8))[0]
-
-
-def float4(file: BinaryIO):
-    return struct.unpack('f', file.read(4))[0]
-
-
-def string(file: BinaryIO):
-    length = int2(file)
-    return file.read(length).decode()
+from reader import bool1, string, int2, int4, float4, read_list, assert_version
 
 
 def mod_vector(vector: List):
@@ -34,37 +9,24 @@ def mod_vector(vector: List):
 
 
 def parse_file(file: BinaryIO):
-    # FASTBIN0
-    buf = file.read(8)
-    version = int2(file)
-    assert version == 23, "Root serializer version should be 23 but found " + str(version)
+    file.read(8)    # FASTBIN0
+    assert_version('Root serializer', 23, int2(file))
 
-    # READ PREFABS
-    version = int2(file)
-    assert version == 1, "PREFAB_INSTANCE_LIST serializer version should be 1 but found " + str(version)
-
-    mesh_count = int4(file)
-    # file.read(2)
-
-    mesh_instances = list(map(lambda _: read_mesh_instance(file), range(mesh_count)))
-
+    buildings = read_building_list(file)
     file.read(74)
+    particles = read_particle_list(file)
 
-    # READ PARTICLES
-    version = int2(file)
-    assert_version('PARTICLE_EMITTER_LIST', 1, version)
-
-    particle_count = int4(file)
-    particle_instances = list(map(lambda _: read_particle_instance(file), range(particle_count)))
-    print(particle_instances)
-
-    return mesh_instances
+    return buildings
 
 
-def read_mesh_instance(file: BinaryIO):
+def read_building_list(file: BinaryIO):
+    assert_version('BATTLEFIELD_BUILDING_LIST', 1, int2(file))
+    return read_list(file, read_building_instance)
+
+
+def read_building_instance(file: BinaryIO):
     instance = {}
-    version = int2(file)
-    assert version == 8, "PREFAB_INSTANCE serializer version should be 1 but found " + str(version)
+    assert_version('BUILDING', 8, int2(file))
     file.read(4)
     instance["model_name"] = string(file)
     instance["object_relation1"] = string(file)
@@ -93,6 +55,11 @@ def read_mesh_instance(file: BinaryIO):
     return instance
 
 
+def read_particle_list(file: BinaryIO):
+    assert_version('PARTICLE_EMITTER_LIST', 1, int2(file))
+    return read_list(file, read_particle_instance)
+
+
 def read_particle_instance(file: BinaryIO):
     particle = Particle()
     version = int2(file)
@@ -110,7 +77,7 @@ def read_particle_instance(file: BinaryIO):
 
     version = int2(file)
     assert_version('PARTICLE_EMITTER->flags', 2, version)
-    flags = {
+    particle.flags = {
         'allow_in_outfield': bool1(file),
         'clamp_to_surface': bool1(file),
         'clamp_to_water_surface': bool1(file),
@@ -119,13 +86,8 @@ def read_particle_instance(file: BinaryIO):
         'autumn': bool1(file),
         'winter': bool1(file)
     }
-    particle.flags = flags
     particle.object_relation = string(file)
     file.read(4)
     particle.autoplay = bool1(file)
     particle.visible_in_shroud = bool1(file)
     return particle
-
-
-def assert_version(name, expected, actual):
-    assert actual == expected, "{0} serializer version should be {1} but found {2}".format(name, expected, actual)

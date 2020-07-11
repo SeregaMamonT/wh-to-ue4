@@ -122,13 +122,6 @@ def process_file(filename, format):
         tw_structures = list(map(get_total_war_structure, data))
         ue_structures = list(map(get_unreal_engine_structure, data))
 
-        # for inst in data:
-        #     inst["position"] = list(map(format_float, inst.get("position")))
-        #     inst["scale"] = list(map(format_float, inst.get("scale")))
-        #     solution = get_angles_deg(transpose(inst.get("coordinates")))
-        #     inst["rotation"] = list(map(format_float, solution))
-        #     del inst["coordinates"]
-
         if format == "json":
             save_json(tw_structures, filename)
         elif format == "xml":
