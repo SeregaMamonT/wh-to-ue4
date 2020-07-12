@@ -80,28 +80,28 @@ def read_ef_line_list(file: BinaryIO):
 
 def read_go_outlines(file: BinaryIO):
     regions_amount = int4(file)
-    print(regions_amount)
+    # print(regions_amount)
     for i in range(regions_amount):
         point_amount = int4(file)
         points_list = []
         for j in range(point_amount):
             t = (float4(file), float4(file))
             points_list.append(t)
-        print(points_list)
+        # print(points_list)
 
     # assert int4(file) == 0, "GO_OUTLINES has items"
 
 
 def read_non_terrain_outlines(file: BinaryIO):
     regions_amount = int4(file)
-    print(regions_amount)
+    # print(regions_amount)
     for i in range(regions_amount):
         point_amount = int4(file)
         points_list = []
         for j in range(point_amount):
             t = (float4(file), float4(file))
             points_list.append(t)
-        print(points_list)
+        # print(points_list)
 
     # assert int4(file) == 0, "NON_TERRAIN_OUTLINES has items"
 
@@ -112,28 +112,27 @@ def read_zones_template_list(file: BinaryIO):
 
 
 def read_prefab_instance_list(file: BinaryIO):
-    int2(file)  # version
-    instance = {}
-    assert_version('BUILDING', 8, int2(file))
-    file.read(4)
-    instance["model_name"] = string(file)
-    instance["object_relation1"] = string(file)
+    version = int2(file)  # version
+    # print('Serrializer Version: ', version)
+    prefab_amount = int4(file)
+    # print('Prefabs amount: ', prefab_amount)
+    for i in range(prefab_amount):
+        prefab_version = int2(file)
+        #print('Prefab serrializer Version: ', prefab_version)
+        name = string(file)
+        #print('Prefab name: ', name)
+        # file.read(75)
+        transformation_matrix = []
+        i = 16
+        while i > 0:
+            matrix_element = float4(file)
+            transformation_matrix.append(matrix_element)
+            i = i-1
+        #print(transformation_matrix)
+        file.read(11)
+        height_mode = string(file)
+        #print('Height mode: ', height_mode)
 
-    coordinates = read_coordinates(file)
-    translation = read_translation(file)
-
-    scales = get_scale(coordinates)
-    unscale(coordinates, scales)
-
-    instance["position"] = translation
-    instance["scale"] = scales
-    instance["coordinates"] = coordinates
-
-    file.read(18)
-    instance["object_relation2"] = string(file)
-
-    return instance
-    # assert int4(file) == 0, "PREFAB_INSTANCE_LIST has items"
 
 
 def read_bmd_outline_list(file: BinaryIO):
@@ -210,7 +209,7 @@ def read_prop_prop_instance(file: BinaryIO):
     bool1(file)
     bool1(file)
     prop.height_mode = string(file)
-    print(int8(file))
+    # print(int8(file))
     bool1(file)
     bool1(file)
 
