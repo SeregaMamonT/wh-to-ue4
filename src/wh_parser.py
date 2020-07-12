@@ -79,11 +79,31 @@ def read_ef_line_list(file: BinaryIO):
 
 
 def read_go_outlines(file: BinaryIO):
-    assert int4(file) == 0, "GO_OUTLINES has items"
+    regions_amount = int4(file)
+    print(regions_amount)
+    for i in range(regions_amount):
+        point_amount = int4(file)
+        points_list = []
+        for j in range(point_amount):
+            t = (float4(file), float4(file))
+            points_list.append(t)
+        print(points_list)
+
+    # assert int4(file) == 0, "GO_OUTLINES has items"
 
 
 def read_non_terrain_outlines(file: BinaryIO):
-    assert int4(file) == 0, "NON_TERRAIN_OUTLINES has items"
+    regions_amount = int4(file)
+    print(regions_amount)
+    for i in range(regions_amount):
+        point_amount = int4(file)
+        points_list = []
+        for j in range(point_amount):
+            t = (float4(file), float4(file))
+            points_list.append(t)
+        print(points_list)
+
+    # assert int4(file) == 0, "NON_TERRAIN_OUTLINES has items"
 
 
 def read_zones_template_list(file: BinaryIO):

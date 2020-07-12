@@ -116,6 +116,7 @@ def get_unreal_engine_structure(instance):
 
 
 def process_file(filename, format):
+    print(filename)
     def parse_and_save(input_file):
         try:
             data = parse_file(input_file)
