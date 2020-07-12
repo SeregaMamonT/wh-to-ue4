@@ -117,7 +117,11 @@ def get_unreal_engine_structure(instance):
 
 def process_file(filename, format):
     def parse_and_save(input_file):
-        data = parse_file(input_file)
+        try:
+            data = parse_file(input_file)
+        except Exception as e:
+            print('Current file position: ' + hex(input_file.tell()).upper())
+            raise e
 
         tw_structures = list(map(get_total_war_structure, data))
         ue_structures = list(map(get_unreal_engine_structure, data))
