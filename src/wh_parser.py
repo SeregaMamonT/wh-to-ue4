@@ -70,8 +70,37 @@ def read_building_list_far(file: BinaryIO):
 
 
 def read_capture_location_set(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "CAPTURE_LOCATION_SET has items"
+    version = int2(file)  # version
+    # print('Version: ', version)
+    list_amount = int4(file)
+    for i in range(list_amount):
+        location_amount = int4(file)
+        # print('Locations: ', location_amount)
+        for j in range(location_amount):
+            location = (float4(file), float4(file))
+            # print(location)
+            radius = float4(file)
+            valid_for_min_num_players = int4(file)
+            valid_for_max_num_players = int4(file)
+            # print(radius, valid_for_min_num_players, valid_for_max_num_players)
+            capture_point_type = string(file)
+            # print(capture_point_type)
+            location_points = int4(file)
+            location_points_list = []
+            for l in range(location_points):
+                t = (float4(file), float4(file))
+                location_points_list.append(t)
+            # print(location_points_list)
+            database_key = string(file)
+            # print(database_key)
+            flag_facing = (float4(file), float4(file))
+            building_links = int4(file)
+            # print(building_links)
+            for l in range(building_links):
+                file.read(10)
+                building_link = string(file)
+                # print(building_link)
+    # assert int4(file) == 0, "CAPTURE_LOCATION_SET has items"
 
 
 def read_ef_line_list(file: BinaryIO):
