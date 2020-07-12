@@ -3,7 +3,7 @@ from typing import BinaryIO, List, Any, Callable
 from wh_binary_objects import Particle, Prop
 from reader import bool1, string, int2, int4, float4, read_list, assert_version, int8
 
-
+#
 def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
@@ -184,22 +184,30 @@ def read_prop_key_instance(file: BinaryIO):
 
 
 def read_prop_prop_instance(file: BinaryIO):
-    assert_version('PROP', 15, int2(file))
+    # assert_version('PROP', 15, int2(file))
+
+    version = int2(file)
+    # print('Prop version: ', version)
 
     prop = Prop()
     prop.key_index = int2(file)
     file.read(2)  # TODO
 
     prop.coordinates = read_coordinates(file)
+    # print(prop.coordinates)
     prop.translation = read_translation(file)
-
+    # print(prop.translation)
     prop.scale = get_scale(prop.coordinates)
+    # print(prop.scale)
     unscale(prop.coordinates, prop.scale)
 
     prop.decal = bool1(file)
+    # print('Decal: ', prop.decal)
     file.read(7)  # flags from logic_decal to animated
     prop.decal_parallax_scale = float4(file)
+    # print('Decal parallax: ', prop.decal_parallax_scale)
     prop.decal_tiling = float4(file)
+    # print('Decal tiling: ', prop.decal_tiling)
     bool1(file)
 
     prop.flags = read_flags(file)
@@ -209,9 +217,18 @@ def read_prop_prop_instance(file: BinaryIO):
     bool1(file)
     bool1(file)
     prop.height_mode = string(file)
+    # print('Height mode: ', prop.height_mode)
+    if version == 15:
+        strange_number = int8(file)
+        # print('Strange number: ', strange_number)
+        bool1(file)
+        bool1(file)
+    elif version == 14:
+        strange_number = int4(file)
+        # print('Strange number: ', strange_number)
+        bool1(file)
+        bool1(file)
     # print(int8(file))
-    bool1(file)
-    bool1(file)
 
     return prop
 
@@ -219,19 +236,31 @@ def read_prop_prop_instance(file: BinaryIO):
 def read_particle_instance(file: BinaryIO):
     particle = Particle()
     version = int2(file)
-    assert_version('PARTICLE_EMITTER', 5, version)
+    # print('Version: ', version)
+    # assert_version('PARTICLE_EMITTER', 5, version)
     particle.model_name = string(file)
+    # print('Particle name: ', particle.model_name)
 
     particle.coordinates = read_coordinates(file)
+    # print(particle.coordinates)
     particle.position = read_translation(file)
-
+    # print(particle.position)
     file.read(6)  # to be translated
 
     particle.flags = read_flags(file)
+    # print(particle.flags)
     particle.object_relation = string(file)
-    file.read(4)
-    particle.autoplay = bool1(file)
-    particle.visible_in_shroud = bool1(file)
+    # print(particle.object_relation)
+    if (version == 5):
+        file.read(4)
+        particle.autoplay = bool1(file)
+        # print('Autoplay: ', particle.autoplay)
+        particle.visible_in_shroud = bool1(file)
+    elif (version ==6):
+        file.read(8)
+        particle.autoplay = bool1(file)
+        # print('Autoplay: ', particle.autoplay)
+        particle.visible_in_shroud = bool1(file)
     return particle
 
 
