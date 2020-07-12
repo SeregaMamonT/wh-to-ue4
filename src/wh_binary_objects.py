@@ -3,7 +3,7 @@ from typing import Dict, List
 from app_typing import Matrix, Vector
 
 
-class Mesh:
+class Building:
     model_name: str
     object_relation1: str
     object_relation2: str
@@ -22,6 +22,19 @@ class Particle:
     visible_in_shroud: bool
 
 
+class Prop:
+    key_index: int
+    position: Vector
+    coordinates: Matrix
+    scale: Vector
+    decal: bool
+    flags: Dict[str, bool]
+    decal_parallax_scale: float
+    decal_tiling: float
+    height_mode: str
+
+
 class Prefab:
-    meshes: List[Mesh]
+    buildings: List[Building]
+    props: Dict[str, List[Prop]]
     particles: List[Particle]
