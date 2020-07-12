@@ -113,7 +113,27 @@ def read_zones_template_list(file: BinaryIO):
 
 def read_prefab_instance_list(file: BinaryIO):
     int2(file)  # version
-    assert int4(file) == 0, "PREFAB_INSTANCE_LIST has items"
+    instance = {}
+    assert_version('BUILDING', 8, int2(file))
+    file.read(4)
+    instance["model_name"] = string(file)
+    instance["object_relation1"] = string(file)
+
+    coordinates = read_coordinates(file)
+    translation = read_translation(file)
+
+    scales = get_scale(coordinates)
+    unscale(coordinates, scales)
+
+    instance["position"] = translation
+    instance["scale"] = scales
+    instance["coordinates"] = coordinates
+
+    file.read(18)
+    instance["object_relation2"] = string(file)
+
+    return instance
+    # assert int4(file) == 0, "PREFAB_INSTANCE_LIST has items"
 
 
 def read_bmd_outline_list(file: BinaryIO):
