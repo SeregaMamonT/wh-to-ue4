@@ -15,6 +15,8 @@ def parse_file(file: BinaryIO, global_context):
 
     file.read(8)  # FASTBIN0
     root_version = int2(file)
+    if root_version not in context:
+        context.append(root_version)
     if root_version == 23 or root_version == 24:
         buildings = read_building_list(file)
         read_building_list_far(file)
@@ -64,7 +66,7 @@ def parse_file(file: BinaryIO, global_context):
 
 
 def read_vegetation(file: BinaryIO):
-    assert_version('Vegetation', 2, int2(file))
+    # assert_version('Vegetation', 2, int2(file))
     tree_list = int4(file)
     # print('Amount: ', tree_list)
     for i in range(tree_list):
@@ -95,7 +97,7 @@ def read_building_instance(file: BinaryIO):
     # if t not in context:
     #    context.append(t)
     instance["model_name"] = string(file)
-    # print('1')
+
     instance["object_relation1"] = string(file)
 
     coordinates = read_coordinates(file)
@@ -108,8 +110,33 @@ def read_building_instance(file: BinaryIO):
     instance["scale"] = scales
     instance["coordinates"] = coordinates
     # print('2')
-    file.read(18)
+    property_version = int2(file)
+
+    # seems to be empty string building_id
+    file.read(2)
+    starting_damage_unary = float4(file)
+
+    # i am not sure about next 4 bytes, but probably they are on_fire, start_disabled, weak_point, ai_breachable
+    on_fire = bool1(file)
+    start_disabled = bool1(file)
+    weak_point = bool1(file)
+    ai_breachable = bool1(file)
+
+    indestructible = bool1(file)
+
+    # next byte is probably dockable
+    dockable = bool1(file)
+
+    toggleable = bool1(file)
+
+    # next 2 bytes are  probably lite and clamp_to_surface
+    lite = bool1(file)
+    clamp_to_surface = bool1(file)
+
+    cast_shadows = bool1(file)
     instance["object_relation2"] = string(file)
+    # print(instance["model_name"], 'version: ', property_version, 'damage: ', starting_damage_unary, 'indestructable: ',
+    #      indestructible, 'toggleable: ', toggleable, 'cast shadows: ', cast_shadows)
 
     return instance
 
@@ -435,7 +462,7 @@ def read_point_light_list(file: BinaryIO):
         colour = (float4(file), float4(file), float4(file))
         colour_scale = float4(file)
         # file.read(9)
-        animation_type= int1(file)
+        animation_type = int1(file)
         params = (float4(file), float4(file))
         # animation_type = float4(file)
         colour_min = float4(file)
@@ -564,7 +591,7 @@ def read_sound_shape_list(file: BinaryIO):
 def read_composite_scene_list(file: BinaryIO):
     version = int2(file)  # version
     composite_scenes = int4(file)
-    print('Composite scenes: ', version, composite_scenes)
+    # print('Composite scenes: ', version, composite_scenes)
     for i in range(composite_scenes):
         composite_scene_version = int2(file)
         file.read(48)
@@ -572,7 +599,7 @@ def read_composite_scene_list(file: BinaryIO):
         height_mode = string(file)
         pdlc_mask = int8(file)
         file.read(3)
-        print(composite_scene_version, composite_scene_name, height_mode, pdlc_mask)
+        # print(composite_scene_version, composite_scene_name, height_mode, pdlc_mask)
     # assert int4(file) == 0, "COMPOSITE_SCENE_LIST has items"
 
 
@@ -592,9 +619,26 @@ def read_tree_list_reference_list(file: BinaryIO):
 
 
 def read_grass_list_reference_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "GRASS_LIST_REFERENCE_LIST has items"
+    # assert_version('Vegetation', 2, int2(file))
+    tree_list = int4(file)
+    print('Amount: ', tree_list)
+    for i in range(tree_list):
+        another_serializer = int2(file)
+        key = string(file)
+        print('Name:', key)
+        amount = int4(file)
+        print('Amount: ', amount)
+        for j in range(amount):
+            x = float4(file)
+            y = float4(file)
+            z = float4(file)
+            scale = float4(file)
+            is_freeform = bool1(file)
+            # print(x, y, z, scale, is_freeform)
+    vegetation = []
 
+    # int2(file)  # version
+    # assert int4(file) == 0, "GRASS_LIST_REFERENCE_LIST has items"
 
 
 def read_flags(file: BinaryIO):
