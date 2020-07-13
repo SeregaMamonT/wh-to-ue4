@@ -7,7 +7,10 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
-def parse_file(file: BinaryIO):
+def parse_file(file: BinaryIO, global_context):
+    global context
+    context = global_context
+
     file.read(8)  # FASTBIN0
     root_version = int2(file)
     if root_version != 23 and root_version != 24:
