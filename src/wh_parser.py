@@ -136,8 +136,21 @@ def read_non_terrain_outlines(file: BinaryIO):
 
 
 def read_zones_template_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "ZONES_TEMPLATE_LIST has items"
+    version = int2(file)  # version
+    # print('Version: ', version)
+    amount = int4(file)
+    # print('Amount: ', amount)
+    for i in range(amount):
+        points = int4(file)
+        file.read(points*10)
+        # print('Points: ', points)
+        # points_list = []
+        # for j in range(points):
+        #    t = (float4(file), float4(file))
+        #   points_list.append(t)
+        # print(points_list)
+
+    # assert int4(file) == 0, "ZONES_TEMPLATE_LIST has items"
 
 
 def read_prefab_instance_list(file: BinaryIO):
@@ -147,9 +160,9 @@ def read_prefab_instance_list(file: BinaryIO):
     # print('Prefabs amount: ', prefab_amount)
     for i in range(prefab_amount):
         prefab_version = int2(file)
-        #print('Prefab serrializer Version: ', prefab_version)
+        # print('Prefab serrializer Version: ', prefab_version)
         name = string(file)
-        #print('Prefab name: ', name)
+        # print('Prefab name: ', name)
         # file.read(75)
         transformation_matrix = []
         i = 16
@@ -157,10 +170,17 @@ def read_prefab_instance_list(file: BinaryIO):
             matrix_element = float4(file)
             transformation_matrix.append(matrix_element)
             i = i-1
-        #print(transformation_matrix)
-        file.read(11)
+        # print(transformation_matrix)
+        property_overrides = int4(file)
+        # print('Property overrides: ', property_overrides)
+        for j in range(property_overrides):
+            file.read(2)
+            property_value = string(file)
+            # print(property_value)
+            file.read(14)
+        file.read(7)
         height_mode = string(file)
-        #print('Height mode: ', height_mode)
+        # print('Height mode: ', height_mode)
 
 
 
