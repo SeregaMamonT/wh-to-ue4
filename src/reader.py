@@ -7,6 +7,9 @@ from typing import BinaryIO, List, Callable, Any
 def bool1(file: BinaryIO):
     return struct.unpack('?', file.read(1))[0]
 
+def int1(file: BinaryIO):
+    return struct.unpack('b', file.read(1))[0]
+
 
 def int2(file: BinaryIO):
     return struct.unpack('h', file.read(2))[0]

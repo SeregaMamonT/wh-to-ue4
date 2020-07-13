@@ -1,7 +1,7 @@
 from typing import BinaryIO, List, Any, Callable
 
 from wh_binary_objects import Particle, Prop
-from reader import bool1, string, int2, int4, float4, read_list, assert_version, int8
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8
 
 
 #
@@ -422,8 +422,28 @@ def read_terrain_stencil_triangle_list(file: BinaryIO):
 
 
 def read_point_light_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "POINT_LIGHT_LIST has items"
+    version = int2(file)  # version
+    point_lights = int4(file)
+    print("Point lights: ", version, point_lights)
+    for i in range(point_lights):
+        point_ligh_version = int2(file)
+        position = (float4(file), float4(file), float4(file))
+        radius = float4(file)
+        colour = (float4(file), float4(file), float4(file))
+        colour_scale = float4(file)
+        # file.read(9)
+        animation_type= int1(file)
+        params = (float4(file), float4(file))
+        # animation_type = float4(file)
+        colour_min = float4(file)
+        random_offset = float4(file)
+        falloff_type = string(file)
+        lf_relative = bool1(file)
+        height_mode = string(file)
+        light_probes_only = bool1(file)
+        pdlc_mask = int8(file)
+        print(point_ligh_version, position, radius, colour, colour_scale, animation_type, params, colour_min, random_offset, falloff_type, height_mode, pdlc_mask)
+    # assert int4(file) == 0, "POINT_LIGHT_LIST has items"
 
 
 def read_building_projectile_emitter_list(file: BinaryIO):
