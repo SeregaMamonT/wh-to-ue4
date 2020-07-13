@@ -40,6 +40,9 @@ def parse_file(file: BinaryIO, global_context):
         read_point_light_list(file)
         read_building_projectile_emitter_list(file)
         read_playable_area(file)
+
+        # end of prefab!!!
+
         read_custom_material_mesh_list(file)
         read_terrain_stencil_blend_triangle_list(file)
         read_spot_light_list(file)
@@ -501,7 +504,7 @@ def read_terrain_stencil_blend_triangle_list(file: BinaryIO):
 def read_spot_light_list(file: BinaryIO):
     version = int2(file)  # version
     spot_lights = int4(file)
-    print("Spot lights: ", version, spot_lights)
+    # print("Spot lights: ", version, spot_lights)
     for i in range(spot_lights):
         spot_light_version = int2(file)
         position = (float4(file), float4(file), float4(file))
@@ -511,23 +514,66 @@ def read_spot_light_list(file: BinaryIO):
         outer_angle = float4(file)
         colour = (float4(file), float4(file), float4(file))
         falloff = float4(file)
+
+        # probably gobo='' and volumetric='false'
         file.read(3)
-        # gobo = string(file)
+
         height_mode = string(file)
         pdlc_mask = int8(file)
-        print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode, pdlc_mask)
+        # print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode, pdlc_mask)
 
     # assert int4(file) == 0, "SPOT_LIGHT_LIST has items"
 
 
 def read_sound_shape_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "SOUND_SHAPE_LIST has items"
+    version = int2(file)  # version
+    sound_shapes = int4(file)
+    # print('Sound shapes: ', version, sound_shapes)
+    for i in range(sound_shapes):
+        sound_shape_version = int2(file)
+        key = string(file)
+        type = string(file)
+        # print(key, type)
+        points = int4(file)
+        # print('Points: ', points)
+        point_list = []
+        for j in range(points):
+            point = (float4(file), float4(file), float4(file))
+            point_list.append(point)
+        inner_radius = float4(file)
+        outer_radius = float4(file)
+
+        # probably campaign_type_mask int4
+        file.read(4)
+
+        inner_cube = (float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
+        outer_cube = (float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
+        # print(point_list)
+        # print(inner_radius, outer_radius, inner_cube, outer_cube)
+        clamp_to_surface = bool1(file)
+        height_mode = string(file)
+
+        # there is tag <river_nodes/> in xml, byt i dont know what it has inside, i will find, will try  to parse
+
+        file.read(4)
+        pdlc_mask = int8(file)
+        # print(height_mode, pdlc_mask, clamp_to_surface)
+    # assert int4(file) == 0, "SOUND_SHAPE_LIST has items"
 
 
 def read_composite_scene_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "COMPOSITE_SCENE_LIST has items"
+    version = int2(file)  # version
+    composite_scenes = int4(file)
+    print('Composite scenes: ', version, composite_scenes)
+    for i in range(composite_scenes):
+        composite_scene_version = int2(file)
+        file.read(48)
+        composite_scene_name = string(file)
+        height_mode = string(file)
+        pdlc_mask = int8(file)
+        file.read(3)
+        print(composite_scene_version, composite_scene_name, height_mode, pdlc_mask)
+    # assert int4(file) == 0, "COMPOSITE_SCENE_LIST has items"
 
 
 def read_deployment_list(file: BinaryIO):
