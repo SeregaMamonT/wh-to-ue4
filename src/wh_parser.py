@@ -424,7 +424,7 @@ def read_terrain_stencil_triangle_list(file: BinaryIO):
 def read_point_light_list(file: BinaryIO):
     version = int2(file)  # version
     point_lights = int4(file)
-    print("Point lights: ", version, point_lights)
+    # print("Point lights: ", version, point_lights)
     for i in range(point_lights):
         point_ligh_version = int2(file)
         position = (float4(file), float4(file), float4(file))
@@ -442,7 +442,7 @@ def read_point_light_list(file: BinaryIO):
         height_mode = string(file)
         light_probes_only = bool1(file)
         pdlc_mask = int8(file)
-        print(point_ligh_version, position, radius, colour, colour_scale, animation_type, params, colour_min, random_offset, falloff_type, height_mode, pdlc_mask)
+        # print(point_ligh_version, position, radius, colour, colour_scale, animation_type, params, colour_min, random_offset, falloff_type, height_mode, pdlc_mask)
     # assert int4(file) == 0, "POINT_LIGHT_LIST has items"
 
 
@@ -499,8 +499,25 @@ def read_terrain_stencil_blend_triangle_list(file: BinaryIO):
 
 
 def read_spot_light_list(file: BinaryIO):
-    int2(file)  # version
-    assert int4(file) == 0, "SPOT_LIGHT_LIST has items"
+    version = int2(file)  # version
+    spot_lights = int4(file)
+    print("Spot lights: ", version, spot_lights)
+    for i in range(spot_lights):
+        spot_light_version = int2(file)
+        position = (float4(file), float4(file), float4(file))
+        end = (float4(file), float4(file), float4(file), float4(file))
+        length = float4(file)
+        inner_angle = float4(file)
+        outer_angle = float4(file)
+        colour = (float4(file), float4(file), float4(file))
+        falloff = float4(file)
+        file.read(3)
+        # gobo = string(file)
+        height_mode = string(file)
+        pdlc_mask = int8(file)
+        print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode, pdlc_mask)
+
+    # assert int4(file) == 0, "SPOT_LIGHT_LIST has items"
 
 
 def read_sound_shape_list(file: BinaryIO):
