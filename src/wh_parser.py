@@ -2,6 +2,8 @@ from typing import BinaryIO, List, Any, Callable
 
 from wh_binary_objects import Particle, Prop
 from reader import bool1, string, int2, int4, float4, read_list, assert_version, int8
+
+
 #
 def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
@@ -13,29 +15,68 @@ def parse_file(file: BinaryIO, global_context):
 
     file.read(8)  # FASTBIN0
     root_version = int2(file)
-    if root_version != 23 and root_version != 24:
-        raise Exception('Only versions 23 and 24 of root are supported')
+    if root_version == 23 or root_version == 24:
+        buildings = read_building_list(file)
+        read_building_list_far(file)
+        read_capture_location_set(file)
+        read_ef_line_list(file)
+        read_go_outlines(file)
+        read_non_terrain_outlines(file)
+        read_zones_template_list(file)
+        read_prefab_instance_list(file)
+        read_bmd_outline_list(file)
+        read_terrain_outlines(file)
+        read_lite_building_outlines(file)
+        read_camera_zones(file)
+        read_civilian_deployment_list(file)
+        read_civilian_shelter_list(file)
+        props = read_prop_list(file)
+        particles = read_particle_list(file)
+        read_ai_hints(file)
 
-    buildings = read_building_list(file)
-    read_building_list_far(file)
-    read_capture_location_set(file)
-    read_ef_line_list(file)
-    read_go_outlines(file)
-    read_non_terrain_outlines(file)
-    read_zones_template_list(file)
-    read_prefab_instance_list(file)
-    read_bmd_outline_list(file)
-    read_terrain_outlines(file)
-    read_lite_building_outlines(file)
-    read_camera_zones(file)
-    read_civilian_deployment_list(file)
-    read_civilian_shelter_list(file)
-    props = read_prop_list(file)
-    particles = read_particle_list(file)
+        # rest of file
+        read_light_probe_list(file)
+        read_terrain_stencil_triangle_list(file)
+        read_point_light_list(file)
+        read_building_projectile_emitter_list(file)
+        read_playable_area(file)
+        read_custom_material_mesh_list(file)
+        read_terrain_stencil_blend_triangle_list(file)
+        read_spot_light_list(file)
+        read_sound_shape_list(file)
+        read_composite_scene_list(file)
+        read_deployment_list(file)
+        read_bmd_catchment_area_list(file)
+        print('Hooray it did not crash!')
+        # only for version 24
+        # read_tree_list_reference_list(file)
+        # read_grass_list_reference_list(file)
 
-    # rest of file
+        return buildings
 
-    return buildings
+    elif root_version == 2:
+        read_vegetation(file)
+    else:
+        raise Exception('Only versions 2, 23, 24 of root are supported')
+
+
+def read_vegetation(file: BinaryIO):
+    assert_version('Vegetation', 2, int2(file))
+    tree_list = int4(file)
+    # print('Amount: ', tree_list)
+    for i in range(tree_list):
+        key = string(file)
+        # print('Name:', key)
+        amount = int4(file)
+        # print('Amount: ', amount)
+        for j in range(amount):
+            x = float4(file)
+            y = float4(file)
+            z = float4(file)
+            scale = float4(file)
+            is_freeform = bool1(file)
+            # print(x, y, z, scale, is_freeform)
+    vegetation = []
 
 
 def read_building_list(file: BinaryIO):
@@ -51,7 +92,7 @@ def read_building_instance(file: BinaryIO):
     # if t not in context:
     #    context.append(t)
     instance["model_name"] = string(file)
-    #print('1')
+    # print('1')
     instance["object_relation1"] = string(file)
 
     coordinates = read_coordinates(file)
@@ -167,14 +208,14 @@ def read_prefab_instance_list(file: BinaryIO):
         prefab_version = int2(file)
         # print('Prefab serrializer Version: ', prefab_version)
         name = string(file)
-        #print('Prefab name: ', name)
+        # print('Prefab name: ', name)
         # file.read(75)
         transformation_matrix = []
         i = 16
         while i > 0:
             matrix_element = float4(file)
             transformation_matrix.append(matrix_element)
-            i = i-1
+            i = i - 1
         # print(transformation_matrix)
         property_overrides = int4(file)
         # print('Property overrides: ', property_overrides)
@@ -188,10 +229,9 @@ def read_prefab_instance_list(file: BinaryIO):
         # print('Height mode: ', height_mode)
 
 
-
 def read_bmd_outline_list(file: BinaryIO):
     version = int2(file)  # version
-    #print(version)
+    # print(version)
     assert int4(file) == 0, "BMD_OUTLINE_LIST has items"
 
 
@@ -311,12 +351,167 @@ def read_particle_instance(file: BinaryIO):
         particle.autoplay = bool1(file)
         # print('Autoplay: ', particle.autoplay)
         particle.visible_in_shroud = bool1(file)
-    elif (version ==6):
+    elif (version == 6):
         file.read(8)
         particle.autoplay = bool1(file)
         # print('Autoplay: ', particle.autoplay)
         particle.visible_in_shroud = bool1(file)
     return particle
+
+
+def read_ai_hints(file: BinaryIO):
+    version = int2(file)  # version
+    # print('Version: ', version)
+
+    # separators
+    separators_version = int2(file)
+    separators_amount = int4(file)
+    # print('Separators: ', separators_version, separators_amount)
+
+    # directed_points
+    directed_points_version = int2(file)
+    directed_points_amount = int4(file)
+    # print('Directed points: ', directed_points_version, directed_points_amount)
+
+    # polylines
+    polylines_version = int2(file)
+    polylines_amount = int4(file)
+    # print('Polylines: ', polylines_version, polylines_amount)
+    for i in range(polylines_amount):
+        polyline_version = int2(file)
+        polyline_type = string(file)
+        # print(polyline_version, polyline_type)
+        polyline_points_amount = int4(file)
+        polyline_points_list = []
+        for j in range(polyline_points_amount):
+            t = (float4(file), float4(file))
+            polyline_points_list.append(t)
+        # print(polyline_points_list)
+    polylines_list_version = int2(file)
+    polylines_list_amount = int4(file)
+    # print('Polylines list: ', polylines_list_version, polylines_list_amount)
+    # assert int4(file) == 0, "AI_HINTS has items"
+
+
+def read_light_probe_list(file: BinaryIO):
+    version = int2(file)  # version
+    amount = int4(file)
+    # print('Lightprobe: ', version, amount)
+    for i in range(amount):
+        light_probe_version = int2(file)
+        t = (float4(file), float4(file), float4(file))
+        radius = float4(file)
+        is_primary = bool1(file)
+        height_mode = string(file)
+        # print(t, radius, is_primary, height_mode)
+    # assert int4(file) == 0, "LIGHT_PROBE_LIST has items"
+
+
+def read_terrain_stencil_triangle_list(file: BinaryIO):
+    version = int2(file)  # version
+    terrain_stencil_triangles = int4(file)
+    for i in range(terrain_stencil_triangles):
+        terrain_stencil_triangle_version = int2(file)
+        position0 = (float4(file), float4(file), float4(file))
+        position1 = (float4(file), float4(file), float4(file))
+        position2 = (float4(file), float4(file), float4(file))
+        height_mode = string(file)
+        # print(terrain_stencil_triangle_version, position0, position1, position2, height_mode)
+
+    # assert int4(file) == 0, "TERRAIN_STENCIL_TRIANGLE_LIST has items"
+
+
+def read_point_light_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "POINT_LIGHT_LIST has items"
+
+
+def read_building_projectile_emitter_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "BUILDING_PROJECTILE_EMITTER_LIST has items"
+
+
+def read_playable_area(file: BinaryIO):
+    version = int2(file)  # version
+    # print('Version: ', version)
+    min_x = float4(file)
+    min_y = float4(file)
+    max_x = float4(file)
+    max_y = float4(file)
+    # print(min_x, min_y, max_x, max_y)
+    has_been_set = bool1(file)
+    valid_location_flags_version = int2(file)
+    valid_north = bool1(file)
+    valid_south = bool1(file)
+    valid_east = bool1(file)
+    valid_west = bool1(file)
+    # print(valid_location_flags_version, valid_north, valid_south, valid_east, valid_west)
+    # assert int4(file) == 0, "PLAYABLE_AREA has items"
+
+
+def read_custom_material_mesh_list(file: BinaryIO):
+    version = int2(file)  # version
+    custom_material_mesh_list_amount = int4(file)
+    # print('Version: ', version, custom_material_mesh_list_amount)
+    for i in range(custom_material_mesh_list_amount):
+        custom_material_mesh_version = int2(file)
+        vertices_amount = int4(file)
+        vertex_list = []
+        for j in range(vertices_amount):
+            t = (float4(file), float4(file), float4(file))
+            vertex_list.append(t)
+        # print(vertex_list)
+        indices_amount = int4(file)
+        indices_list = []
+        for j in range(indices_amount):
+            indices_list.append(int2(file))
+        # print(indices_list)
+        material = string(file)
+        # print(material)
+        height_mode = string(file)
+
+    # assert int4(file) == 0, "CUSTOM_MATERIAL_MESH_LIST has items"
+
+
+def read_terrain_stencil_blend_triangle_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "TERRAIN_STENCIL_BLEND_TRIANGLE_LIST has items"
+
+
+def read_spot_light_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "SPOT_LIGHT_LIST has items"
+
+
+def read_sound_shape_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "SOUND_SHAPE_LIST has items"
+
+
+def read_composite_scene_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "COMPOSITE_SCENE_LIST has items"
+
+
+def read_deployment_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "DEPLOYMENT_LIST has items"
+
+
+def read_bmd_catchment_area_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "BMD_CATCHMENT_AREA_LIST has items"
+
+
+def read_tree_list_reference_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "TREE_LIST_REFERENCE_LIST has items"
+
+
+def read_grass_list_reference_list(file: BinaryIO):
+    int2(file)  # version
+    assert int4(file) == 0, "GRASS_LIST_REFERENCE_LIST has items"
+
 
 
 def read_flags(file: BinaryIO):

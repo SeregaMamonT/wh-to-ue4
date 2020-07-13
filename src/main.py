@@ -141,7 +141,7 @@ def process_file(filename, format):
 
 
 def process_directory(format):
-    all_files = [f for f in listdir() if isfile(f) and f.endswith(".bmd")]
+    all_files = [f for f in listdir() if isfile(f) and f.endswith(".bmd") or f.endswith(".vegetation")]
     for file in all_files:
         process_file(file, format)
     # print(global_context)
