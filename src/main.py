@@ -9,7 +9,6 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
 from src.wh_parser import parse_file
 
-
 def format_float(x):
     return "{:.5f}".format(x).rstrip("0").strip(".")
 
@@ -114,12 +113,14 @@ def get_unreal_engine_structure(instance):
         "rotation": list(map(format_float, get_angles_deg_XZY(transpose(instance.get("coordinates")))))
     }
 
+global_context = []
 
 def process_file(filename, format):
     print(filename)
     def parse_and_save(input_file):
         try:
-            data = parse_file(input_file)
+            global global_context
+            data = parse_file(input_file,  global_context)
         except Exception as e:
             print('Current file position: ' + hex(input_file.tell()).upper())
             raise e
@@ -143,6 +144,7 @@ def process_directory(format):
     all_files = [f for f in listdir() if isfile(f) and f.endswith(".bmd")]
     for file in all_files:
         process_file(file, format)
+    # print(global_context)
 
 
 if __name__ == "__main__":

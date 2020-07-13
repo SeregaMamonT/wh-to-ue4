@@ -2,7 +2,6 @@ from typing import BinaryIO, List, Any, Callable
 
 from wh_binary_objects import Particle, Prop
 from reader import bool1, string, int2, int4, float4, read_list, assert_version, int8
-
 #
 def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
@@ -44,8 +43,12 @@ def read_building_list(file: BinaryIO):
 def read_building_instance(file: BinaryIO):
     instance = {}
     assert_version('BUILDING', 8, int2(file))
-    file.read(4)
+    # file.read(4)
+    t = (int2(file), int2(file))
+    # if t not in context:
+    #    context.append(t)
     instance["model_name"] = string(file)
+    #print('1')
     instance["object_relation1"] = string(file)
 
     coordinates = read_coordinates(file)
@@ -57,7 +60,7 @@ def read_building_instance(file: BinaryIO):
     instance["position"] = translation
     instance["scale"] = scales
     instance["coordinates"] = coordinates
-
+    # print('2')
     file.read(18)
     instance["object_relation2"] = string(file)
 
@@ -109,7 +112,7 @@ def read_ef_line_list(file: BinaryIO):
 
 def read_go_outlines(file: BinaryIO):
     regions_amount = int4(file)
-    # print(regions_amount)
+    # print('Go outlines: ', regions_amount)
     for i in range(regions_amount):
         point_amount = int4(file)
         points_list = []
@@ -123,7 +126,7 @@ def read_go_outlines(file: BinaryIO):
 
 def read_non_terrain_outlines(file: BinaryIO):
     regions_amount = int4(file)
-    # print(regions_amount)
+    # print('Non terrain outlines: ', regions_amount)
     for i in range(regions_amount):
         point_amount = int4(file)
         points_list = []
@@ -137,20 +140,19 @@ def read_non_terrain_outlines(file: BinaryIO):
 
 def read_zones_template_list(file: BinaryIO):
     version = int2(file)  # version
+    # assert int4(file) == 0, "ZONES_TEMPLATE_LIST has items"
     # print('Version: ', version)
     amount = int4(file)
     # print('Amount: ', amount)
     for i in range(amount):
         points = int4(file)
-        file.read(points*10)
-        # print('Points: ', points)
-        # points_list = []
-        # for j in range(points):
-        #    t = (float4(file), float4(file))
-        #   points_list.append(t)
-        # print(points_list)
-
-    # assert int4(file) == 0, "ZONES_TEMPLATE_LIST has items"
+        print('Points: ', points)
+        points_list = []
+        for j in range(points):
+            t = (float4(file), float4(file))
+            points_list.append(t)
+        print(points_list)
+        file.read(72)
 
 
 def read_prefab_instance_list(file: BinaryIO):
@@ -162,7 +164,7 @@ def read_prefab_instance_list(file: BinaryIO):
         prefab_version = int2(file)
         # print('Prefab serrializer Version: ', prefab_version)
         name = string(file)
-        # print('Prefab name: ', name)
+        #print('Prefab name: ', name)
         # file.read(75)
         transformation_matrix = []
         i = 16
@@ -185,7 +187,8 @@ def read_prefab_instance_list(file: BinaryIO):
 
 
 def read_bmd_outline_list(file: BinaryIO):
-    int2(file)  # version
+    version = int2(file)  # version
+    #print(version)
     assert int4(file) == 0, "BMD_OUTLINE_LIST has items"
 
 
