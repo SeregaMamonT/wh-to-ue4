@@ -18,14 +18,15 @@ def read_spot_light_list(file: BinaryIO):
         colour = (float4(file), float4(file), float4(file))
         falloff = float4(file)
 
-        # probably gobo='' and volumetric='false'
-        file.read(3)
+        gobo = string(file)
+        volumetric = bool1(file)
 
         height_mode = string(file)
         if spot_light_version == 5:
             pdlc_mask = int4(file)
         elif spot_light_version == 6:
             pdlc_mask = int8(file)
-        # print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode, pdlc_mask)
+        # print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode,
+        #       pdlc_mask, gobo, volumetric)
 
     # assert int4(file) == 0, "SPOT_LIGHT_LIST has items"

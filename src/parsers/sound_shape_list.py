@@ -21,24 +21,24 @@ def read_sound_shape_list(file: BinaryIO):
             point_list.append(point)
         inner_radius = float4(file)
         outer_radius = float4(file)
-
-        # probably campaign_type_mask int4
-        file.read(4)
+        # print(sound_shape_version, key, type, point_list, inner_radius, outer_radius)
 
         inner_cube = (float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
         outer_cube = (float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
-        # print(point_list)
-        # print(inner_radius, outer_radius, inner_cube, outer_cube)
+        river_nodes_amount = int4(file)
+        # print(inner_radius, outer_radius, inner_cube, outer_cube, river_nodes_amount)
+        river_nodes_list = []
+        for i in range(river_nodes_amount):
+            river_node_version = int2(file)
+            rive_nodes_points = (float4(file), float4(file), float4(file), float4(file),float4(file))
+            river_nodes_list.append(rive_nodes_points)
+        # print(river_nodes_list)
         clamp_to_surface = bool1(file)
         height_mode = string(file)
 
-        # there is tag <river_nodes/> in xml, byt i dont know what it has inside, i will find, will try  to parse
-
-        file.read(4)
+        campaign_type_mask = int4(file)
         if sound_shape_version == 6:
             pdlc_mask = int4(file)
         elif sound_shape_version == 7:
             pdlc_mask = int8(file)
-
-        # print(height_mode, pdlc_mask, clamp_to_surface)
     # assert int4(file) == 0, "SOUND_SHAPE_LIST has items"

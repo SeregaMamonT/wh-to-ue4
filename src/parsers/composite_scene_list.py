@@ -13,7 +13,10 @@ def read_composite_scene_list(file: BinaryIO):
         file.read(48)
         composite_scene_name = string(file)
         height_mode = string(file)
-        pdlc_mask = int8(file)
+        if composite_scene_version == 6:
+            pdlc_mask = int4(file)
+        elif composite_scene_version == 7:
+            pdlc_mask = int8(file)
         file.read(3)
         # print(composite_scene_version, composite_scene_name, height_mode, pdlc_mask)
     # assert int4(file) == 0, "COMPOSITE_SCENE_LIST has items"
