@@ -40,3 +40,44 @@ def assert_version(name, expected, actual):
 def read_list(file: BinaryIO, instance_reader: Callable[[BinaryIO], Any]):
     instance_count = int4(file)
     return list(map(lambda _: instance_reader(file), range(instance_count)))
+
+
+def mod_vector(vector: List):
+    return sum([x * x for x in vector]) ** 0.5
+
+
+def read_coordinates(file: BinaryIO):
+    coordinates = [[None] * 3 for i in range(3)]
+    for i in range(9):
+        coordinates[i // 3][i % 3] = float4(file)
+    return coordinates
+
+
+def read_translation(file: BinaryIO):
+    translation = [None] * 3
+    for i in range(3):
+        translation[i] = float4(file)
+    return translation
+
+
+def get_scale(coordinates):
+    return list(map(mod_vector, coordinates))
+
+
+def unscale(coordinates, scales):
+    for i in range(3):
+        for j in range(3):
+            coordinates[i][j] /= scales[i]
+
+
+def read_flags(file: BinaryIO):
+    assert_version('PARTICLE_EMITTER->flags', 2, int2(file))
+    return {
+        'allow_in_outfield': bool1(file),
+        'clamp_to_surface': bool1(file),
+        'clamp_to_water_surface': bool1(file),
+        'spring': bool1(file),
+        'summer': bool1(file),
+        'autumn': bool1(file),
+        'winter': bool1(file)
+    }
