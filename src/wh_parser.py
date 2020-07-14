@@ -20,6 +20,7 @@ from parsers.civilian_shelter_list import read_civilian_shelter_list
 from parsers.prop_list import read_prop_list
 from parsers.particle_emitter_list import read_particle_list
 from parsers.ai_hints import read_ai_hints
+
 from parsers.light_probe_list import read_light_probe_list
 from parsers.terrain_stencil_triangle_list import read_terrain_stencil_triangle_list
 from parsers.point_light_list import read_point_light_list
@@ -65,13 +66,13 @@ def parse_file(file: BinaryIO, global_context):
         props = read_prop_list(file)
         particles = read_particle_list(file)
         read_ai_hints(file)
-
         # rest of file
         read_light_probe_list(file)
         read_terrain_stencil_triangle_list(file)
         read_point_light_list(file)
         read_building_projectile_emitter_list(file)
         read_playable_area(file)
+
 
         # end of prefab!!!
 
