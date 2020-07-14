@@ -22,13 +22,13 @@ def read_deployment_list(file: BinaryIO):
                 for k in range(boundary_list_amount):
                     boundary_version = int2(file)
                     deployment_area_boundary_type = string(file)
-                    print(deployment_area_boundary_type)
+                    # print(deployment_area_boundary_type)
                     boundary_amount = int4(file)
                     boundary_positions = []
                     for m in range(boundary_amount):
                         position = (float4(file), float4(file))
                         boundary_positions.append(position)
-                    print(boundary_positions)
+                    # print(boundary_positions)
 
                 # not sure about order, and palces in cycle
                 orientation = float4(file)

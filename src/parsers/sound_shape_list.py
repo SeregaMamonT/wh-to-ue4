@@ -35,6 +35,10 @@ def read_sound_shape_list(file: BinaryIO):
         # there is tag <river_nodes/> in xml, byt i dont know what it has inside, i will find, will try  to parse
 
         file.read(4)
-        pdlc_mask = int8(file)
+        if sound_shape_version == 6:
+            pdlc_mask = int4(file)
+        elif sound_shape_version == 7:
+            pdlc_mask = int8(file)
+
         # print(height_mode, pdlc_mask, clamp_to_surface)
     # assert int4(file) == 0, "SOUND_SHAPE_LIST has items"

@@ -22,7 +22,10 @@ def read_spot_light_list(file: BinaryIO):
         file.read(3)
 
         height_mode = string(file)
-        pdlc_mask = int8(file)
+        if spot_light_version == 5:
+            pdlc_mask = int4(file)
+        elif spot_light_version == 6:
+            pdlc_mask = int8(file)
         # print(spot_light_version, position, end, length, inner_angle, outer_angle, colour, falloff, height_mode, pdlc_mask)
 
     # assert int4(file) == 0, "SPOT_LIGHT_LIST has items"

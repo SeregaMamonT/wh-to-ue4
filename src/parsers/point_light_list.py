@@ -8,6 +8,7 @@ def read_point_light_list(file: BinaryIO):
     version = int2(file)  # version
     point_lights = int4(file)
     # print("Point lights: ", version, point_lights)
+    # print('Current file position: ' + hex(input_file.tell()).upper())
     for i in range(point_lights):
         point_ligh_version = int2(file)
         position = (float4(file), float4(file), float4(file))
@@ -24,6 +25,9 @@ def read_point_light_list(file: BinaryIO):
         lf_relative = bool1(file)
         height_mode = string(file)
         light_probes_only = bool1(file)
-        pdlc_mask = int8(file)
+        if point_ligh_version == 5:
+            pdlc_mask = int4(file)
+        elif point_ligh_version == 6:
+            pdlc_mask = int8(file)
         # print(point_ligh_version, position, radius, colour, colour_scale, animation_type, params, colour_min, random_offset, falloff_type, height_mode, pdlc_mask)
     # assert int4(file) == 0, "POINT_LIGHT_LIST has items"
