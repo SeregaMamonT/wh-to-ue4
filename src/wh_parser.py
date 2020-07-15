@@ -74,7 +74,9 @@ def parse_file(file: BinaryIO, global_context):
         particles = read_particle_list(file)
         # for i in particles:
         #  print(i.__dict__)
-        read_ai_hints(file)
+        ai_hints = read_ai_hints(file)
+        # print(ai_hints.__dict__)
+
         # rest of file
         read_light_probe_list(file)
         read_terrain_stencil_triangle_list(file)

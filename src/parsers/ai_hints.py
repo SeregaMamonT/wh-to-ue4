@@ -3,67 +3,74 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
     read_translation, get_scale, unscale
 
+from wh_binary_objects import AiHint, Polygone, PolyLine, PolyLineList, Point2D
+
+
+
+def read_polyline(file):
+    polyline = PolyLine
+    version = int2(file)
+    polyline.type = string(file)
+    points_amount = int4(file)
+    polyline.points = []
+    for i in range(points_amount):
+        point = Point2D(float4(file), float4(file))
+        polyline.points.append(point)
+
+    return polyline
+
+
+def read_polygone(file):
+    polygone = Polygone
+    polygone.points_amount = int4(file)
+    polygone.points = []
+    for i in range(polygone.points_amount):
+        point = Point2D(float4(file), float4(file))
+        polygone.points.append(point)
+
+    return polygone
 
 def read_ai_hints(file: BinaryIO):
     version = int2(file)  # version
     # print('Version: ', version)
+    ai_hints = AiHint()
+
+    ai_hints.separators = []
 
     # separators
     separators_version = int2(file)
     separators_amount = int4(file)
-    # print('Separators: ', separators_version, separators_amount)
     for i in range(separators_amount):
-        separator_version = int2(file)
-        separator_type = string(file)
-        separator_points_amount = int4(file)
-        separator_points_list = []
-        for j in range( separator_points_amount):
-            t = (float4(file), float4(file))
-            separator_points_list.append(t)
-        # print( separator_points_list)
-
-
+        ai_hints.separators.append(read_polyline(file))
 
     # directed_points
     directed_points_version = int2(file)
     directed_points_amount = int4(file)
-    # print('Directed points: ', directed_points_version, directed_points_amount)
 
     # polylines
     polylines_version = int2(file)
     polylines_amount = int4(file)
-    # print('Polylines: ', polylines_version, polylines_amount)
+
+    polylines = []
+    ai_hints.polylines = []
     for i in range(polylines_amount):
-        polyline_version = int2(file)
-        polyline_type = string(file)
-        # print(polyline_version, polyline_type)
-        polyline_points_amount = int4(file)
-        polyline_points_list = []
-        for j in range(polyline_points_amount):
-            t = (float4(file), float4(file))
-            polyline_points_list.append(t)
-        # print(polyline_points_list)
+        ai_hints.polylines.append(read_polyline(file))
+
 
     # polylines list
+
     polylines_list_version = int2(file)
     polylines_list_amount = int4(file)
-    # print('Polylines list: ', polylines_list_version, polylines_list_amount)
-    for i in range( polylines_list_amount):
-        hint_polylines_version = int2(file)
-        hint_polylines_type = string(file)
-        # print(hint_polylines_version, hint_polylines_type)
-        polygons_amount = int4(file)
-        # print('Polygons amount: ', polygons_amount)
 
-        # polygons ned to think for proper format!!!!
-        polygons = []
+    ai_hints.polylines_list_list = []
+    for i in range(polylines_list_amount):
+        poly_lines_list = PolyLineList()
+
+        hint_polylines_version = int2(file)
+        poly_lines_list.type = string(file)
+        polygons_amount = int4(file)
+        poly_lines_list.polygons = []
         for j in range(polygons_amount):
-            polygons_points_amount = int4(file)
-            # print('polygone type', polygons_points_amount)
-            polygon_points =[]
-            for l in range(polygons_points_amount):
-                t = (float4(file), float4(file))
-                polygon_points.append(t)
-            polygons.append(polygon_points)
-        #print(polygons)
-    # assert int4(file) == 0, "AI_HINTS has items"
+            poly_lines_list.polygons.append(read_polygone(file))
+
+    return ai_hints

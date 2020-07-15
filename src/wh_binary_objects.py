@@ -127,3 +127,25 @@ class PrefabInstance:
     transformation: Matrix
     property_overrides = []
     height_mode: str
+
+
+class PolyLine:
+    type: str
+    points: List[Point2D]
+
+
+class Polygone:
+    points_amount: int
+    points: List[Point2D]
+
+
+class PolyLineList:
+    type: str
+    polygones: List[Polygone]
+
+
+class AiHint:
+    separators: List[PolyLine]
+    directed_points: []
+    polylines: List[PolyLine]
+    polylines_list: List[PolyLineList]
