@@ -57,12 +57,6 @@ class Prop:
     height_mode: str
 
 
-class Prefab:
-    buildings: List[Building]
-    props: Dict[str, List[Prop]]
-    particles: List[Particle]
-
-
 class PointLight:
     position: Point3D
     radius: float
@@ -149,3 +143,59 @@ class AiHint:
     directed_points: []
     polylines: List[PolyLine]
     polylines_list: List[PolyLineList]
+
+
+class LightProbe:
+    position: Point3D
+    radius: float
+    is_primary: bool
+    height_mode: str
+
+
+class TerrainStencilTriangle:
+    position1: Point3D
+    position2: Point3D
+    position3: Point3D
+    height_mode: str
+
+
+class BuildingProjectileEmitter:
+    position: Point3D
+    direction = Point3D
+    building_index: int
+    height_mode = str
+
+
+class PlayableArea:
+    min_x: float
+    min_y: float
+    max_x: float
+    max_y: float
+    has_been_set: bool
+    flags: Dict[str, bool]
+
+
+class Prefab:
+    buildings: List[Building]
+    capture_locations: List[CaptureLocation]
+    go_outlines: List[Outline]
+    non_terrain_outlines: List[Outline]
+    zones_templates: List[ZoneTemplate]
+    prefab_instances: List[PrefabInstance]
+    props: Dict[str, List[Prop]]
+    particles: List[Particle]
+    ai_hints: AiHint
+    light_probes: List[LightProbe]
+    terrain_stencil_triangle: List[TerrainStencilTriangle]
+    point_lights: List[PointLight]
+    building_projectile_emitters: List[BuildingProjectileEmitter]
+    playable_area = PlayableArea
+
+class PrefabTreeProps:
+    position: Point3D
+    scale: float
+    is_freeform: bool
+
+class PrefabTree:
+    key: str
+    props: List[PrefabTreeProps]

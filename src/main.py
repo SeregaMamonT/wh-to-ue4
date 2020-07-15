@@ -6,7 +6,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 
 from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
-from src.wh_parser import read_map, read_prefab
+from src.wh_parser import read_map, read_prefab, read_prefab_vegetation
 from wh_parser import read_vegetation, parse_file
 
 
@@ -128,10 +128,17 @@ def read_vegetation_file(prefab_vegetation_file: str):
         return read_vegetation(file)
 
 
+@read_file_error_logger
+def read_prefab_vegetation_file(prefab_vegetation_file: str):
+    with open(prefab_vegetation_file, 'rb') as file:
+        return read_prefab_vegetation(file)
+
+
+
 def parse_prefab(prefab_name: str):
     prefab_vegetation_name = prefab_name + '.vegetation'
     if path.exists(prefab_vegetation_name):
-        return read_prefab_file(prefab_name), read_vegetation_file(prefab_vegetation_name)
+        return read_prefab_file(prefab_name), read_prefab_vegetation_file(prefab_vegetation_name)
     else:
         return read_prefab_file(prefab_name)
 
