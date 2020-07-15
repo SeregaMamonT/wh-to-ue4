@@ -105,8 +105,50 @@ def parse_file(file: BinaryIO, global_context):
         raise Exception('Only versions 2, 23, 24 of root are supported')
 
 
+
 @offset_error_logger
-def read_file(file: BinaryIO, global_context):
+def read_prefab(file: BinaryIO, global_context):
+
+    global context
+    context = global_context
+
+
+    file.read(8)  # FASTBIN0
+    root_version = int2(file)
+    if root_version not in context:
+        context.append(root_version)
+    if root_version == 23 or root_version == 24:
+        buildings = read_building_list(file)
+        read_building_list_far(file)
+        capture_location_set = read_capture_location_set(file)
+        read_ef_line_list(file)
+        read_go_outlines(file)
+        read_non_terrain_outlines(file)
+        read_zones_template_list(file)
+        read_prefab_instance_list(file)
+        read_bmd_outline_list(file)
+        read_terrain_outlines(file)
+        read_lite_building_outlines(file)
+        read_camera_zones(file)
+        read_civilian_deployment_list(file)
+        read_civilian_shelter_list(file)
+        props = read_prop_list(file)
+        particles = read_particle_list(file)
+        read_ai_hints(file)
+        read_light_probe_list(file)
+        read_terrain_stencil_triangle_list(file)
+        point_light_list = read_point_light_list(file)
+        read_building_projectile_emitter_list(file)
+        read_playable_area(file)
+
+        return buildings
+
+    else:
+        raise Exception('Only versions 23, 24 of root are supported')
+
+
+@offset_error_logger
+def read_map(file: BinaryIO, global_context):
     global context
     context = global_context
 
@@ -118,9 +160,6 @@ def read_file(file: BinaryIO, global_context):
         buildings = read_building_list(file)
         read_building_list_far(file)
         capture_location_set = read_capture_location_set(file)
-        for i in capture_location_set:
-            for j in i:
-                print(j.__dict__)
         read_ef_line_list(file)
         read_go_outlines(file)
         read_non_terrain_outlines(file)
@@ -143,6 +182,7 @@ def read_file(file: BinaryIO, global_context):
         #   print(i.__dict__)
         read_building_projectile_emitter_list(file)
         read_playable_area(file)
+
         # end of prefab!!!
         read_custom_material_mesh_list(file)
         read_terrain_stencil_blend_triangle_list(file)

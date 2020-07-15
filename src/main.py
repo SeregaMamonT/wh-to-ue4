@@ -6,7 +6,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 
 from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
-from src.wh_parser import read_file
+from src.wh_parser import read_map, read_prefab
 from wh_parser import read_vegetation, parse_file
 
 
@@ -113,13 +113,13 @@ global_context = []
 @read_file_error_logger
 def read_prefab_file(prefab_name: str):
     with open(prefab_name, 'rb') as file:
-        return read_file(file, global_context)
+        return read_prefab(file, global_context)
 
 
 @read_file_error_logger
 def read_map_file(map_file_name: str):
     with open(map_file_name, 'rb') as file:
-        return read_file(file, global_context)
+        return read_map(file, global_context)
 
 
 @read_file_error_logger
