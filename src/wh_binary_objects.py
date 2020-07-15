@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from app_typing import Matrix, Vector
+from app_typing import Matrix, Vector, Colour
 
 
 class Building:
@@ -38,3 +38,19 @@ class Prefab:
     buildings: List[Building]
     props: Dict[str, List[Prop]]
     particles: List[Particle]
+
+
+class PointLight:
+    position: Vector
+    radius: float
+    colour_scale: float
+    colour: Colour
+    animation_type: int
+    params: tuple
+    colour_min: float
+    random_offset: float
+    falloff_type: str
+    height_mode: str
+    light_probes_only: str
+    pdlc_mask: int
+    flags: Dict[str, bool]

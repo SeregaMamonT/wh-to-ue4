@@ -72,7 +72,6 @@ def parse_file(file: BinaryIO, global_context):
         read_point_light_list(file)
         read_building_projectile_emitter_list(file)
         read_playable_area(file)
-
         # end of prefab!!!
         read_custom_material_mesh_list(file)
         read_terrain_stencil_blend_triangle_list(file)
