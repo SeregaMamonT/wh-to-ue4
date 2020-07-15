@@ -54,14 +54,16 @@ def parse_file(file: BinaryIO, global_context):
         buildings = read_building_list(file)
         read_building_list_far(file)
         capture_location_set = read_capture_location_set(file)
-        for i in capture_location_set:
-            for j in i:
-                print(j.__dict__)
+        # for i in capture_location_set:
+        #   for j in i:
+        #        print(j.__dict__)
         read_ef_line_list(file)
         read_go_outlines(file)
         read_non_terrain_outlines(file)
         read_zones_template_list(file)
-        read_prefab_instance_list(file)
+        prefab_instance_list = read_prefab_instance_list(file)
+        # for i in prefab_instance_list:
+        #  print(i.__dict__)
         read_bmd_outline_list(file)
         read_terrain_outlines(file)
         read_lite_building_outlines(file)
@@ -70,6 +72,8 @@ def parse_file(file: BinaryIO, global_context):
         read_civilian_shelter_list(file)
         props = read_prop_list(file)
         particles = read_particle_list(file)
+        # for i in particles:
+        #  print(i.__dict__)
         read_ai_hints(file)
         # rest of file
         read_light_probe_list(file)
