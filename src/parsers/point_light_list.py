@@ -6,6 +6,29 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 from wh_binary_objects import PointLight
 
 
+def read_point_light_v4(file):
+    point_light = PointLight()
+    point_light.position = (float4(file), float4(file), float4(file))
+    point_light.radius = float4(file)
+    point_light.colour = (float4(file), float4(file), float4(file))
+    point_light.colour_scale = float4(file)
+    point_light.animation_type = int1(file)
+    point_light.params = (float4(file), float4(file))
+    point_light.colour_min = float4(file)
+    point_light.random_offset = float4(file)
+    point_light.falloff_type = string(file)
+
+    # in all files it is in1 -4
+    file.read(1)
+    point_light.height_mode = string(file)
+
+    # in all files it is 0
+    file.read(1)
+    point_light.pdlc_mask = int4(file)
+
+    return point_light
+
+
 def read_point_light_v5(file):
     point_light = PointLight()
     point_light.position = (float4(file), float4(file), float4(file))
@@ -45,6 +68,7 @@ def read_point_light_v6(file):
 
 
 version_readers = {
+    4: read_point_light_v4,
     5: read_point_light_v5,
     6: read_point_light_v6,
 }
