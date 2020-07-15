@@ -46,7 +46,7 @@ def get_version_reader(version):
     if version in version_readers:
         return version_readers[version]
     else:
-        raise Exception('Unsupported point light version: ' + str(version))
+        raise Exception('Unsupported playable area version: ' + str(version))
 
 
 def read_playable_area(file: BinaryIO):

@@ -37,7 +37,7 @@ from parsers.sound_shape_list import read_sound_shape_list
 from parsers.composite_scene_list import read_composite_scene_list
 from parsers.deployment_list import read_deployment_list
 from parsers.bmd_catchment_area_list import read_bmd_catchment_area_list
-from parsers.prefab_vegetation import read_prefab_tree_list
+from parsers.prefab_vegetation import read_prefab_vegetation_list
 from parsers.tree_list_reference_list import read_tree_list_reference_list
 from parsers.grass_list_reference_list import read_grass_list_reference_list
 
@@ -207,8 +207,7 @@ def read_map(file: BinaryIO, global_context):
 @offset_error_logger
 def read_prefab_vegetation(file: BinaryIO):
     file.read(8)  # FASTBIN0
-    assert_version('Vegetation', 2, int2(file))
-    prefab_vegetation = read_prefab_tree_list(file)
+    prefab_vegetation = read_prefab_vegetation_list(file)
     # for i in prefab_vegetation:
     #    print(i.__dict__)
 
