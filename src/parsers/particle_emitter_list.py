@@ -5,37 +5,57 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import Particle
 
-def read_particle_list(file: BinaryIO):
-    assert_version('PARTICLE_EMITTER_LIST', 1, int2(file))
-    return read_list(file, read_particle_instance)
 
-
-def read_particle_instance(file: BinaryIO):
+def read_particle_instance_v5(file):
     particle = Particle()
-    version = int2(file)
-    # print('Version: ', version)
-    # assert_version('PARTICLE_EMITTER', 5, version)
     particle.model_name = string(file)
-    # print('Particle name: ', particle.model_name)
-
     particle.coordinates = read_coordinates(file)
-    # print(particle.coordinates)
     particle.position = read_translation(file)
-    # print(particle.position)
     file.read(6)  # to be translated
-
     particle.flags = read_flags(file)
-    # print(particle.flags)
     particle.object_relation = string(file)
-    # print(particle.object_relation)
-    if (version == 5):
-        file.read(4)
-        particle.autoplay = bool1(file)
-        # print('Autoplay: ', particle.autoplay)
-        particle.visible_in_shroud = bool1(file)
-    elif (version == 6):
-        file.read(8)
-        particle.autoplay = bool1(file)
-        # print('Autoplay: ', particle.autoplay)
-        particle.visible_in_shroud = bool1(file)
+
+    file.read(4)
+    particle.autoplay = bool1(file)
+    particle.visible_in_shroud = bool1(file)
+
     return particle
+
+
+def read_particle_instance_v6(file):
+    particle = Particle()
+    particle.model_name = string(file)
+    particle.coordinates = read_coordinates(file)
+    particle.position = read_translation(file)
+    file.read(6)  # to be translated
+    particle.flags = read_flags(file)
+    particle.object_relation = string(file)
+    file.read(8)
+    particle.autoplay = bool1(file)
+    particle.visible_in_shroud = bool1(file)
+
+    return particle
+
+version_readers = {
+    5: read_particle_instance_v5,
+    6: read_particle_instance_v6,
+}
+
+
+def get_version_reader(version):
+    if version in version_readers:
+        return version_readers[version]
+    else:
+        raise Exception('Unsupported particle version: ' + str(version))
+
+
+
+def read_particle_list(file: BinaryIO):
+    version = int2(file)  # version
+    amount = int4(file)
+    particle_list = []
+    for i in range(amount):
+        particle_version = int2(file)
+        particle_list.append(get_version_reader(particle_version)(file))
+
+    return particle_list

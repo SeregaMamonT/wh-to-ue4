@@ -106,8 +106,46 @@ class CaptureLocation:
     valid_for_min_num_players: float
     valid_for_max_num_players = float
     capture_point_type: str
-    location_points: int
     location_points_list: List[Point2D]
     database_key: str
     flag_facing: Point2D
     building_links: List[CaptureLocationBuildingLink]
+
+
+class Outline:
+    points: List[Point2D]
+
+
+class ZoneTemplate:
+    name: str
+    points: List[Point2D]
+    transformation: Matrix
+
+
+class PrefabInstance:
+    name: str
+    transformation: Matrix
+    property_overrides = []
+    height_mode: str
+
+
+class PolyLine:
+    type: str
+    points: List[Point2D]
+
+
+class Polygone:
+    points_amount: int
+    points: List[Point2D]
+
+
+class PolyLineList:
+    type: str
+    polygones: List[Polygone]
+
+
+class AiHint:
+    separators: List[PolyLine]
+    directed_points: []
+    polylines: List[PolyLine]
+    polylines_list: List[PolyLineList]

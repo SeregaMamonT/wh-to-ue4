@@ -3,7 +3,7 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
     read_translation, get_scale, unscale
 
-from wh_binary_objects import CaptureLocation, CaptureLocationBuildingLink
+from wh_binary_objects import CaptureLocation, CaptureLocationBuildingLink, Point2D
 
 
 def read_capture_location(file):
@@ -16,8 +16,8 @@ def read_capture_location(file):
     location_points = int4(file)
     capture_location.location_points_list = []
     for l in range(location_points):
-        t = (float4(file), float4(file))
-        capture_location.location_points_list.append(t)
+        point = Point2D(float4(file), float4(file))
+        capture_location.location_points_list.append(point)
     capture_location.database_key = string(file)
     capture_location.flag_facing = (float4(file), float4(file))
     building_links_amount = int4(file)
