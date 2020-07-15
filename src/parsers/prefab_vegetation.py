@@ -23,7 +23,7 @@ def read_prefab_tree_list(file: BinaryIO):
     version = int2(file)  # version
     amount = int4(file)
     prefab_tree_list = []
-    # for i in range(amount):
-    #   prefab_tree_list.append(read_prefab_tree(file))
+    for i in range(amount):
+       prefab_tree_list.append(read_prefab_tree(file))
 
     return prefab_tree_list

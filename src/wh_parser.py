@@ -141,7 +141,7 @@ def read_prefab(file: BinaryIO, global_context):
         prefab.point_lights = read_point_light_list(file)
         prefab.building_projectile_emitters = read_building_projectile_emitter_list(file)
         prefab.playable_area = read_playable_area(file)
-        print(prefab.__dict__)
+        # print(prefab.__dict__)
         return prefab.buildings
 
     else:
@@ -209,8 +209,8 @@ def read_prefab_vegetation(file: BinaryIO):
     file.read(8)  # FASTBIN0
     assert_version('Vegetation', 2, int2(file))
     prefab_vegetation = read_prefab_tree_list(file)
-    for i in prefab_vegetation:
-        print(i.__dict__)
+    # for i in prefab_vegetation:
+    #    print(i.__dict__)
 
 @offset_error_logger
 def read_tree_list(file: BinaryIO):
