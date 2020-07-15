@@ -191,11 +191,37 @@ class Prefab:
     building_projectile_emitters: List[BuildingProjectileEmitter]
     playable_area = PlayableArea
 
+
 class PrefabTreeProps:
     position: Point3D
     scale: float
     is_freeform: bool
 
+
 class PrefabTree:
     key: str
     props: List[PrefabTreeProps]
+
+
+class CustomMaterialMesh:
+    vertices: List[Point3D]
+    indices: List[int]
+    material: str
+    height_mode = str
+
+
+class MapData:
+    buildings: List[Building]
+    capture_locations: List[CaptureLocation]
+    go_outlines: List[Outline]
+    non_terrain_outlines: List[Outline]
+    zones_templates: List[ZoneTemplate]
+    prefab_instances: List[PrefabInstance]
+    props: Dict[str, List[Prop]]
+    particles: List[Particle]
+    ai_hints: AiHint
+    light_probes: List[LightProbe]
+    terrain_stencil_triangle: List[TerrainStencilTriangle]
+    point_lights: List[PointLight]
+    building_projectile_emitters: List[BuildingProjectileEmitter]
+    playable_area = PlayableArea
