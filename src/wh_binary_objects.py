@@ -1,6 +1,29 @@
 from typing import Dict, List
 
-from app_typing import Matrix, Vector, Colour
+from app_typing import Matrix, Vector
+
+
+class Point3D:
+
+    def __init__(self, x: float, y: float, z: float):
+        self.x = x
+        self.y = y
+        self.z = z
+
+
+class Point2D:
+
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
+
+class ColourRGB:
+
+    def __init__(self, r: float, g: float, b: float):
+        self.red = r
+        self.green = g
+        self.blue = b
 
 
 class Building:
@@ -41,10 +64,10 @@ class Prefab:
 
 
 class PointLight:
-    position: Vector
+    position: Point3D
     radius: float
     colour_scale: float
-    colour: Colour
+    colour: ColourRGB
     animation_type: int
     params: tuple
     colour_min: float
@@ -54,3 +77,37 @@ class PointLight:
     light_probes_only: str
     pdlc_mask: int
     flags: Dict[str, bool]
+
+
+class SpotLight:
+    position: Point3D
+    end: Vector
+    length: float
+    inner_angle: float
+    outer_angle: float
+    colour: ColourRGB
+    falloff: float
+    gobo: str
+    flags: Dict[str, bool]
+    height_mode: str
+    pdlc_mask: int
+
+
+class CaptureLocationBuildingLink:
+    version: int
+    building_index: int
+    prefab_index: int
+    link: str
+
+
+class CaptureLocation:
+    location: Point2D
+    radius: float
+    valid_for_min_num_players: float
+    valid_for_max_num_players = float
+    capture_point_type: str
+    location_points: int
+    location_points_list: List[Point2D]
+    database_key: str
+    flag_facing: Point2D
+    building_links: List[CaptureLocationBuildingLink]

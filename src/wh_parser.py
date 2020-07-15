@@ -40,6 +40,8 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
+
+
 def parse_file(file: BinaryIO, global_context):
     global context
     context = global_context
@@ -51,7 +53,10 @@ def parse_file(file: BinaryIO, global_context):
     if root_version == 23 or root_version == 24:
         buildings = read_building_list(file)
         read_building_list_far(file)
-        read_capture_location_set(file)
+        capture_location_set = read_capture_location_set(file)
+        for i in capture_location_set:
+            for j in i:
+                print(j.__dict__)
         read_ef_line_list(file)
         read_go_outlines(file)
         read_non_terrain_outlines(file)
@@ -69,13 +74,17 @@ def parse_file(file: BinaryIO, global_context):
         # rest of file
         read_light_probe_list(file)
         read_terrain_stencil_triangle_list(file)
-        read_point_light_list(file)
+        point_light_list = read_point_light_list(file)
+        # for i in point_light_list:
+        #   print(i.__dict__)
         read_building_projectile_emitter_list(file)
         read_playable_area(file)
         # end of prefab!!!
         read_custom_material_mesh_list(file)
         read_terrain_stencil_blend_triangle_list(file)
-        read_spot_light_list(file)
+        spot_light_list = read_spot_light_list(file)
+        # for i in spot_light_list:
+        #   print(i.__dict__)
         read_sound_shape_list(file)
         read_composite_scene_list(file)
         read_deployment_list(file)
