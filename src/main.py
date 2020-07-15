@@ -1,24 +1,17 @@
 import json
 import sys
 import random
-from os import listdir
-from os.path import isfile
-from typing import BinaryIO
+from os import listdir, path
 from xml.etree.ElementTree import Element, SubElement, tostring
 
+from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
-from src.wh_parser import parse_file
+from src.wh_parser import read_file
+from wh_parser import read_vegetation, parse_file
+
 
 def format_float(x):
     return "{:.5f}".format(x).rstrip("0").strip(".")
-
-
-def with_file(filename, func):
-    file: BinaryIO = open(filename, 'rb')
-    try:
-        func(file)
-    finally:
-        file.close()
 
 
 def save_json(data, filename):
@@ -113,17 +106,41 @@ def get_unreal_engine_structure(instance):
         "rotation": list(map(format_float, get_angles_deg_XZY(transpose(instance.get("coordinates")))))
     }
 
+
 global_context = []
+
+
+@read_file_error_logger
+def read_prefab_file(prefab_name: str):
+    with open(prefab_name, 'rb') as file:
+        return read_file(file, global_context)
+
+
+@read_file_error_logger
+def read_map_file(map_file_name: str):
+    with open(map_file_name, 'rb') as file:
+        return read_file(file, global_context)
+
+
+@read_file_error_logger
+def read_vegetation_file(prefab_vegetation_file: str):
+    with open(prefab_vegetation_file, 'rb') as file:
+        return read_vegetation(file)
+
+
+def parse_prefab(prefab_name: str):
+    prefab_vegetation_name = prefab_name + '.vegetation'
+    if path.exists(prefab_vegetation_name):
+        return read_prefab_file(prefab_name), read_vegetation_file(prefab_vegetation_name)
+    else:
+        return read_prefab_file(prefab_name)
+
 
 def process_file(filename, format):
     print(filename)
+
     def parse_and_save(input_file):
-        try:
-            global global_context
-            data = parse_file(input_file,  global_context)
-        except Exception as e:
-            print('Current file position: ' + hex(input_file.tell()).upper())
-            raise e
+        data = parse_file(input_file, global_context)
 
         tw_structures = list(map(get_total_war_structure, data))
         ue_structures = list(map(get_unreal_engine_structure, data))
@@ -135,22 +152,69 @@ def process_file(filename, format):
         save_ue4(ue_structures, filename)
 
     try:
-        with_file(filename, parse_and_save)
+        with open(filename, 'rb') as file:
+            parse_and_save(file)
     except Exception as e:
         print("Failed to read " + filename + ": " + str(e))
 
 
+def parse_prefabs(prefab_names):
+    for prefab_name in prefab_names:
+        print("Prefab " + prefab_name)
+        prefab_data = parse_prefab(prefab_name)
+        if prefab_data is not None:
+            print("Prefab + Vegetation found" if len(prefab_data) == 2 else "Only prefab found")
+
+
+def parse_map():
+    if path.exists('bmd_data.bin'):
+        parsed_map = read_map_file('bmd_data.bin')
+    else:
+        raise Exception('bmd_data.bin not found')
+    vegetations = list(map(read_vegetation_file, find_map_vegetations()))
+    return parsed_map, vegetations
+
+
 def process_directory(format):
-    all_files = [f for f in listdir() if isfile(f) and f.endswith(".bmd") or f.endswith(".vegetation")]
+    all_files = [f for f in listdir() if path.isfile(f) and (f.endswith(".bmd") or f.endswith(".vegetation"))]
     for file in all_files:
         process_file(file, format)
     print(global_context)
 
 
-if __name__ == "__main__":
-    format = "xml"
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-        process_file(filename, format)
-    else:
-        process_directory(format)
+def dir_files():
+    return [f for f in listdir() if path.isfile(f)]
+
+
+def find_prefab_files():
+    return [f for f in dir_files() if f.endswith(".bmd")]
+
+
+def find_map_vegetations():
+    return [f for f in dir_files() if f.endswith("tree_list.bin")]
+
+
+def get_parsing_mode_param():
+    for arg in sys.argv:
+        if arg.startswith("mode="):
+            return arg.split("=")[1]
+
+
+def get_file_param():
+    for arg in sys.argv:
+        if arg.startswith("file="):
+            return arg.split("=")[1]
+
+
+if __name__ == '__main__':
+    format = 'xml'
+
+    mode = get_parsing_mode_param()
+    assert mode is not None, "Parsing mode ('mode' parameter) is not defined. Possible values: 'prefab', 'map'"
+
+    if mode == 'prefab':
+        file_param = get_file_param()
+        prefab_names = [file_param] if file_param is not None else find_prefab_files()
+        parse_prefabs(prefab_names)
+    elif mode == 'map':
+        parse_map()
