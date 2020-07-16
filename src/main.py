@@ -145,9 +145,8 @@ def parse_prefab(prefab_name: str):
 def parse_prefabs(prefab_names):
     for prefab_name in prefab_names:
         print("Prefab " + prefab_name)
-        prefab_data = parse_prefab(prefab_name)
-        if prefab_data is not None:
-            print("Prefab + Vegetation found" if len(prefab_data) == 2 else "Only prefab found")
+        prefab, vegetations = parse_prefab(prefab_name)
+        print("Prefab and {0} vegetations found".format(len(vegetations)))
 
 
 def parse_map():
