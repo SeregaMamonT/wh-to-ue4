@@ -3,11 +3,11 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
     read_translation, get_scale, unscale
 
-from wh_binary_objects import PrefabTree, PrefabTreeProps
+from wh_binary_objects import Tree, PrefabTreeProps
 
 
 def read_tree(file):
-    tree = PrefabTree()
+    tree = Tree()
     tree.key = string(file)
     amount = int4(file)
     tree.props = []

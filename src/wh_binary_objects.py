@@ -192,7 +192,7 @@ class PrefabTreeProps:
     is_freeform: bool
 
 
-class PrefabTree:
+class Tree:
     key: str
     props: List[PrefabTreeProps]
 
@@ -255,6 +255,10 @@ class BMDData:
     point_lights: List[PointLight]
     building_projectile_emitters: List[BuildingProjectileEmitter]
     playable_area = PlayableArea
+
+
+class Vegetation:
+    trees: List[Tree]
 
 
 class Prefab(BMDData):

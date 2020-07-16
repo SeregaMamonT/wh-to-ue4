@@ -4,7 +4,7 @@ from decorators import offset_error_logger
 from wh_binary_objects import Particle, Prop
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8
 
-from wh_binary_objects import Prefab, MapData
+from wh_binary_objects import Prefab, MapData, Vegetation
 
 from parsers.battlefield_building_list import read_building_list
 from parsers.battlefield_building_list_far import read_building_list_far
@@ -75,7 +75,7 @@ def read_prefab(file: BinaryIO, global_context):
         prefab.playable_area = read_playable_area(file)
         # print(prefab.__dict__)
 
-        return prefab.buildings
+        return prefab
 
     else:
         raise Exception('Only versions 23, 24 of root are supported')
@@ -134,9 +134,10 @@ def read_map(file: BinaryIO, global_context):
 @offset_error_logger
 def read_prefab_vegetation(file: BinaryIO):
     file.read(8)  # FASTBIN0
-    prefab_vegetation = read_prefab_vegetation_list(file)
-    # for i in prefab_vegetation:
-    #    print(i.__dict__)
+    vegetation = Vegetation()
+    vegetation.trees = read_prefab_vegetation_list(file)
+
+    return vegetation
 
 
 @offset_error_logger

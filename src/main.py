@@ -3,7 +3,7 @@ import sys
 import random
 from os import listdir, path
 from xml.etree.ElementTree import Element, SubElement, tostring
-
+from terry_layer_saver import terry_layer_saver, StructureType
 from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
 from src.wh_parser import read_map, read_prefab, read_prefab_vegetation, read_map_vegetation
@@ -145,8 +145,9 @@ def parse_prefab(prefab_name: str):
 def parse_prefabs(prefab_names):
     for prefab_name in prefab_names:
         print("Prefab " + prefab_name)
-        prefab, vegetations = parse_prefab(prefab_name)
-        print("Prefab and {0} vegetations found".format(len(vegetations)))
+        prefab_parsing_data = parse_prefab(prefab_name)
+        terry_layer_saver(prefab_name, prefab_parsing_data, StructureType.PREFAB)
+        print("Prefab and {0} vegetations found".format(len(prefab_parsing_data[1])))
 
 
 def parse_map():
