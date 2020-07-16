@@ -25,10 +25,3 @@ terry_savers = {
     2: map_saver,
 }
 
-
-def prefab_saver(prefab: Prefab):
-    return
-
-
-def maps_saver(map: MapData):
-    return
