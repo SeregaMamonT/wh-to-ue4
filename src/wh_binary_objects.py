@@ -38,12 +38,13 @@ class Cube:
 
 
 class Building:
-    model_name: str
-    object_relation1: str
-    object_relation2: str
-    position: Vector
+    building_key: str
+    position_type: str
+    height_mode: str
+    starting_damage_unary: float
+    flags: Dict[str, bool]
     coordinates: Matrix
-    scale: Vector
+    transform: List[float]
 
 
 class Particle:

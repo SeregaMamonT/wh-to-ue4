@@ -31,4 +31,6 @@ class TerryBuilding:
     capture_location: str
     export_as_prop: bool
     allow_in_outfield_as_prop: bool
-
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
+    ecmeshrendersettings: ECMeshRenderSettings

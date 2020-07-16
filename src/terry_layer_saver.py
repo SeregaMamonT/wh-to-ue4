@@ -21,10 +21,10 @@ def prefab_saver(filename, prefab_data: tuple):
     prefab = prefab_data[0]
     vegetation = prefab_data[1]
 
-    entities = Element("entities")
-    entities = save_buildings_list(prefab.buildings, entities)
-    content = tostring(entities, "utf-8").decode("utf-8")
-    save_to_file(content, filename + ".xml")
+    #entities = Element("entities")
+    #entities = save_buildings_list(prefab.buildings, entities)
+    #content = tostring(entities, "utf-8").decode("utf-8")
+    #save_to_file(content, filename + ".xml")
 
 
 def map_saver(filename, map: tuple):
