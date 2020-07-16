@@ -26,6 +26,17 @@ class ColourRGB:
         self.blue = b
 
 
+class Cube:
+
+    def __init__(self, min_x: float, min_y: float, min_z: float, max_x: float, max_y: float, max_z: float):
+        self.min_x = min_x
+        self.min_y = min_y
+        self.min_z = min_z
+        self.max_x = max_x
+        self.max_y = max_y
+        self.max_z = max_z
+
+
 class Building:
     model_name: str
     object_relation1: str
@@ -175,23 +186,6 @@ class PlayableArea:
     flags: Dict[str, bool]
 
 
-class Prefab:
-    buildings: List[Building]
-    capture_locations: List[CaptureLocation]
-    go_outlines: List[Outline]
-    non_terrain_outlines: List[Outline]
-    zones_templates: List[ZoneTemplate]
-    prefab_instances: List[PrefabInstance]
-    props: Dict[str, List[Prop]]
-    particles: List[Particle]
-    ai_hints: AiHint
-    light_probes: List[LightProbe]
-    terrain_stencil_triangle: List[TerrainStencilTriangle]
-    point_lights: List[PointLight]
-    building_projectile_emitters: List[BuildingProjectileEmitter]
-    playable_area = PlayableArea
-
-
 class PrefabTreeProps:
     position: Point3D
     scale: float
@@ -208,17 +202,6 @@ class CustomMaterialMesh:
     indices: List[int]
     material: str
     height_mode = str
-
-
-class Cube:
-
-    def __init__(self, min_x: float, min_y: float, min_z: float, max_x: float, max_y: float, max_z: float):
-        self.min_x = min_x
-        self.min_y = min_y
-        self.min_z = min_z
-        self.max_x = max_x
-        self.max_y = max_y
-        self.max_z = max_z
 
 
 class SoundShape:
@@ -257,7 +240,7 @@ class Deployment:
     deployment_areas: List[DeploymentArea]
 
 
-class MapData:
+class BMDData:
     buildings: List[Building]
     capture_locations: List[CaptureLocation]
     go_outlines: List[Outline]
@@ -272,3 +255,15 @@ class MapData:
     point_lights: List[PointLight]
     building_projectile_emitters: List[BuildingProjectileEmitter]
     playable_area = PlayableArea
+
+
+class Prefab(BMDData):
+    def __init__(self):
+        super().__init__()
+
+
+class MapData(BMDData):
+    custom_material_meshes: List[CustomMaterialMesh]
+    spot_lights: List[SpotLight]
+    sound_shapes: List[SoundShape]
+    deployment: List[Deployment]

@@ -4,7 +4,7 @@ from decorators import offset_error_logger
 from wh_binary_objects import Particle, Prop
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8
 
-from wh_binary_objects import Prefab
+from wh_binary_objects import Prefab, MapData
 
 from parsers.battlefield_building_list import read_building_list
 from parsers.battlefield_building_list_far import read_building_list_far
@@ -141,7 +141,7 @@ def read_prefab(file: BinaryIO, global_context):
         prefab.point_lights = read_point_light_list(file)
         prefab.building_projectile_emitters = read_building_projectile_emitter_list(file)
         prefab.playable_area = read_playable_area(file)
-        # print(prefab.__dict__)
+        print(prefab.__dict__)
         return prefab.buildings
 
     else:
@@ -158,52 +158,42 @@ def read_map(file: BinaryIO, global_context):
     if root_version not in context:
         context.append(root_version)
     if root_version == 23 or root_version == 24:
-        buildings = read_building_list(file)
+        map = MapData()
+        map.buildings = read_building_list(file)
         read_building_list_far(file)
-        capture_location_set = read_capture_location_set(file)
+        map.capture_locations = read_capture_location_set(file)
         read_ef_line_list(file)
-        read_go_outlines(file)
-        read_non_terrain_outlines(file)
-        read_zones_template_list(file)
-        read_prefab_instance_list(file)
+        map.go_outlines = read_go_outlines(file)
+        map.non_terrain_outlines = read_non_terrain_outlines(file)
+        map.zones_templates = read_zones_template_list(file)
+        map.prefab_instances = read_prefab_instance_list(file)
         read_bmd_outline_list(file)
         read_terrain_outlines(file)
         read_lite_building_outlines(file)
         read_camera_zones(file)
         read_civilian_deployment_list(file)
         read_civilian_shelter_list(file)
-        props = read_prop_list(file)
-        particles = read_particle_list(file)
-        read_ai_hints(file)
-        # rest of file
-        read_light_probe_list(file)
-        read_terrain_stencil_triangle_list(file)
-        point_light_list = read_point_light_list(file)
-        # for i in point_light_list:
-        #   print(i.__dict__)
-        emitters = read_building_projectile_emitter_list(file)
-        area = read_playable_area(file)
+        map.props = read_prop_list(file)
+        map.particles = read_particle_list(file)
+        map.ai_hints = read_ai_hints(file)
+        map.light_probes = read_light_probe_list(file)
+        map.terrain_stencil_triangle = read_terrain_stencil_triangle_list(file)
+        map.point_lights = read_point_light_list(file)
+        map.building_projectile_emitters = read_building_projectile_emitter_list(file)
+        map.playable_area = read_playable_area(file)
 
-        # end of prefab!!!
-        read_custom_material_mesh_list(file)
+        # only for map
+        map.custom_material_meshes = read_custom_material_mesh_list(file)
         read_terrain_stencil_blend_triangle_list(file)
-        spot_light_list = read_spot_light_list(file)
-        # for i in spot_light_list:
-        #   print(i.__dict__)
-        sound_shapes = read_sound_shape_list(file)
-        # for i in sound_shapes:
-        #    print(i.__dict__)
+        map.spot_lights = read_spot_light_list(file)
+        map.sound_shapes = read_sound_shape_list(file)
         read_composite_scene_list(file)
-        deployment_list = read_deployment_list(file)
-        # for i in deployment_list:
-        #    print(i.__dict__)
+        map.deployment = read_deployment_list(file)
         read_bmd_catchment_area_list(file)
+        # print(map.__dict__)
         print('Hooray it did not crash!')
-        # only for version 24
-        # read_tree_list_reference_list(file)
-        # read_grass_list_reference_list(file)
 
-        return buildings
+        return map.buildings
     else:
         raise Exception('Only versions 2, 23, 24 of root are supported')
 

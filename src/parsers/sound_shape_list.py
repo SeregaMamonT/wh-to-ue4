@@ -5,6 +5,7 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import SoundShape, Point3D, Cube
 
+
 def read_sound_shape_v6(file):
     sound_shape = SoundShape()
     sound_shape.key = string(file)
@@ -28,7 +29,6 @@ def read_sound_shape_v6(file):
     sound_shape.height_mode = string(file)
     sound_shape.campaign_type_mask = int4(file)
     sound_shape.pdlc_mask = int4(file)
-
 
 
 def read_sound_shape_v7(file):
