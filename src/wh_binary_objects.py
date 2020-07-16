@@ -210,6 +210,53 @@ class CustomMaterialMesh:
     height_mode = str
 
 
+class Cube:
+
+    def __init__(self, min_x: float, min_y: float, min_z: float, max_x: float, max_y: float, max_z: float):
+        self.min_x = min_x
+        self.min_y = min_y
+        self.min_z = min_z
+        self.max_x = max_x
+        self.max_y = max_y
+        self.max_z = max_z
+
+
+class SoundShape:
+    key: str
+    typ: str
+    points: List[Point3D]
+    inner_radius: float
+    outer_radius: float
+    inner_cube: Cube
+    outer_cube: Cube
+    river_nodes: []
+    clamp_to_surface: bool
+    height_mode: str
+    campaign_type_mask: int
+    pdlc_mask: int
+
+
+class Boundary:
+    positions: List[Point2D]
+    type: str
+
+
+class DeploymentZoneRegion:
+    orientation: float
+    snap_facing: bool
+    id: int
+    boundary_list: List[Boundary]
+
+
+class DeploymentArea:
+    category: str
+    deployment_zone_regions: List
+
+
+class Deployment:
+    deployment_areas: List[DeploymentArea]
+
+
 class MapData:
     buildings: List[Building]
     capture_locations: List[CaptureLocation]

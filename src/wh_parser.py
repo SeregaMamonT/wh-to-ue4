@@ -190,9 +190,13 @@ def read_map(file: BinaryIO, global_context):
         spot_light_list = read_spot_light_list(file)
         # for i in spot_light_list:
         #   print(i.__dict__)
-        read_sound_shape_list(file)
+        sound_shapes = read_sound_shape_list(file)
+        # for i in sound_shapes:
+        #    print(i.__dict__)
         read_composite_scene_list(file)
-        read_deployment_list(file)
+        deployment_list = read_deployment_list(file)
+        # for i in deployment_list:
+        #    print(i.__dict__)
         read_bmd_catchment_area_list(file)
         print('Hooray it did not crash!')
         # only for version 24
