@@ -134,12 +134,12 @@ def read_map_vegetation_file(map_vegetation_file: str):
 
 
 def parse_prefab(prefab_name: str):
+    prefab = read_prefab_file(prefab_name)
+    vegetations = []
     prefab_vegetation_name = prefab_name + '.vegetation'
     if path.exists(prefab_vegetation_name):
-        return read_prefab_file(prefab_name), read_prefab_vegetation_file(prefab_vegetation_name)
-    else:
-        return read_prefab_file(prefab_name)
-
+        vegetations.append(read_prefab_vegetation_file(prefab_vegetation_name))
+    return prefab, vegetations
 
 
 def parse_prefabs(prefab_names):
