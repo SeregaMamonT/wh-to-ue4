@@ -6,8 +6,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 
 from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
-from src.wh_parser import read_map, read_prefab, read_prefab_vegetation
-from wh_parser import read_vegetation, parse_file
+from src.wh_parser import read_map, read_prefab, read_prefab_vegetation, read_map_vegetation
 
 
 def format_float(x):
@@ -123,16 +122,15 @@ def read_map_file(map_file_name: str):
 
 
 @read_file_error_logger
-def read_vegetation_file(prefab_vegetation_file: str):
-    with open(prefab_vegetation_file, 'rb') as file:
-        return read_vegetation(file)
-
-
-@read_file_error_logger
 def read_prefab_vegetation_file(prefab_vegetation_file: str):
     with open(prefab_vegetation_file, 'rb') as file:
         return read_prefab_vegetation(file)
 
+
+@read_file_error_logger
+def read_map_vegetation_file(map_vegetation_file: str):
+    with open(map_vegetation_file, 'rb') as file:
+        return read_map_vegetation(file)
 
 
 def parse_prefab(prefab_name: str):
@@ -178,7 +176,7 @@ def parse_map():
         parsed_map = read_map_file('bmd_data.bin')
     else:
         raise Exception('bmd_data.bin not found')
-    vegetations = list(map(read_vegetation_file, find_map_vegetations()))
+    vegetations = list(map(read_map_vegetation_file, find_map_vegetations()))
     return parsed_map, vegetations
 
 
