@@ -141,27 +141,6 @@ def parse_prefab(prefab_name: str):
         return read_prefab_file(prefab_name)
 
 
-def process_file(filename, format):
-    print(filename)
-
-    def parse_and_save(input_file):
-        data = parse_file(input_file, global_context)
-
-        tw_structures = list(map(get_total_war_structure, data))
-        ue_structures = list(map(get_unreal_engine_structure, data))
-
-        if format == "json":
-            save_json(tw_structures, filename)
-        elif format == "xml":
-            save_xml(tw_structures, filename)
-        save_ue4(ue_structures, filename)
-
-    try:
-        with open(filename, 'rb') as file:
-            parse_and_save(file)
-    except Exception as e:
-        print("Failed to read " + filename + ": " + str(e))
-
 
 def parse_prefabs(prefab_names):
     for prefab_name in prefab_names:
@@ -179,12 +158,6 @@ def parse_map():
     vegetations = list(map(read_map_vegetation_file, find_map_vegetations()))
     return parsed_map, vegetations
 
-
-def process_directory(format):
-    all_files = [f for f in listdir() if path.isfile(f) and (f.endswith(".bmd") or f.endswith(".vegetation"))]
-    for file in all_files:
-        process_file(file, format)
-    print(global_context)
 
 
 def dir_files():
