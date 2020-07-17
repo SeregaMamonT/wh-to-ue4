@@ -23,7 +23,7 @@ def prefab_saver(filename, prefab_data: tuple):
     # for i in prefab.buildings:
     #    convert_building(i)
     entities = Element("entities")
-    save_buildings_list(prefab.buildings, entities)
+    save_buildings_list(list(map(convert_building, prefab.buildings)), entities)
     save_particles_list(prefab.particles, entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")

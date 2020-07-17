@@ -10,7 +10,7 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
-def convert_building(building: Building):
+def convert_building(building: Building) -> TerryBuilding:
     terry_building = TerryBuilding()
     terry_building.ectransform = ECTransform()
     terry_building.ecmeshrendersettings = ECMeshRenderSettings()
