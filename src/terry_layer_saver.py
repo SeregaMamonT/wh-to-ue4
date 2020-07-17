@@ -6,6 +6,7 @@ from wh_binary_to_terry_convertor import convert_building
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
 
+
 class StructureType(Enum):
     PREFAB = 1
     MAP = 2
@@ -22,8 +23,8 @@ def prefab_saver(filename, prefab_data: tuple):
     # for i in prefab.buildings:
     #    convert_building(i)
     entities = Element("entities")
-    entities = save_buildings_list(prefab.buildings, entities)
-    entities = save_particles_list(prefab.particles, entities)
+    save_buildings_list(prefab.buildings, entities)
+    save_particles_list(prefab.particles, entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 
