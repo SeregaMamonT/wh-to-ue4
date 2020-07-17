@@ -26,11 +26,19 @@ class ECBattleProperties:
 class TerryBuilding:
     key: str
     damage: int
-    indestructible: bool
-    toggleable: bool
     capture_location: str
-    export_as_prop: bool
-    allow_in_outfield_as_prop: bool
+    flags: Dict[str, bool]
     ectransform: ECTransform
     ecterrainclamp: ECTerrainClamp
     ecmeshrendersettings: ECMeshRenderSettings
+
+
+class TerryParticle:
+    vfx: str
+    scale: int
+    instance_name: str
+    flags: Dict[str, bool]
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
+    ecbattleproperties: ECBattleProperties
+
