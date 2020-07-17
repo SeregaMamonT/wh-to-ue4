@@ -42,3 +42,13 @@ class TerryParticle:
     ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
 
+
+class TerryDecal:
+    model_path: str
+    parallax_scale: int
+    tiling: int
+    normal_mode: str
+    flags: Dict[str, bool]
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
+    ecbattleproperties: ECBattleProperties

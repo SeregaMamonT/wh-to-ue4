@@ -59,7 +59,8 @@ class Particle:
 
 class Prop:
     key_index: int
-    position: Vector
+    key: str
+    translation: Vector
     coordinates: Matrix
     scale: Vector
     decal: bool

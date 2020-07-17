@@ -14,6 +14,7 @@ def read_prop_list(file: BinaryIO):
         result[key] = []
     for prop in props:
         key = keys[prop.key_index]
+        prop.key = key
         result[key].append(prop)
     return result
 
@@ -32,13 +33,21 @@ def read_prop_prop_instance(file: BinaryIO):
     prop.key_index = int2(file)
     file.read(2)  # TODO
 
-    prop.coordinates = read_coordinates(file)
-    # print(prop.coordinates)
-    prop.translation = read_translation(file)
-    # print(prop.translation)
-    prop.scale = get_scale(prop.coordinates)
-    # print(prop.scale)
-    unscale(prop.coordinates, prop.scale)
+
+    prop.coordinates = [[None] * 3 for i in range(3)]
+    for i in range(9):
+        prop.coordinates[i // 3][i % 3] = float4(file)
+    prop.translation = [None] * 3
+    for i in range(3):
+        prop.translation[i] = float4(file)
+
+    # prop.coordinates = read_coordinates(file)
+    # # print(prop.coordinates)
+    # prop.translation = read_translation(file)
+    # # print(prop.translation)
+    # prop.scale = get_scale(prop.coordinates)
+    # # print(prop.scale)
+    # unscale(prop.coordinates, prop.scale)
 
     prop.decal = bool1(file)
     # print('Decal: ', prop.decal)

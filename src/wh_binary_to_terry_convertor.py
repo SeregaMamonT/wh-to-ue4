@@ -1,6 +1,7 @@
-from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, ECBattleProperties
+from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
+    ECBattleProperties, TerryDecal
 from typing import BinaryIO, List
-from wh_binary_objects import Building, Particle
+from wh_binary_objects import Building, Particle, Prop
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -61,3 +62,29 @@ def convert_particle(particle: Particle) -> TerryParticle:
     terry_particle.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
 
     return terry_particle
+
+
+def convert_decal(prop: Prop) -> TerryDecal:
+    terry_decal = TerryDecal()
+    print(prop.__dict__)
+    terry_decal.ectransform = ECTransform()
+    terry_decal.ecterrainclamp = ECTerrainClamp()
+    terry_decal.ecbattleproperties = ECBattleProperties()
+
+    terry_decal.model_path = prop.key
+    terry_decal.parallax_scale = int(prop.decal_parallax_scale)
+    terry_decal.tiling = int(prop.decal_tiling)
+    terry_decal.ectransform.position = []
+
+    for i in range(3):
+        terry_decal.ectransform.position.append(prop.translation[i])
+
+    coordinates = prop.coordinates
+    terry_decal.ectransform.scale = list(map(mod_vector, coordinates))
+    for i in range(3):
+        scale = terry_decal.ectransform.scale[i]
+        for j in range(3):
+            coordinates[i][j] /= scale
+    terry_decal.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+
+    return terry_decal
