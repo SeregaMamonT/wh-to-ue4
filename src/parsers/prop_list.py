@@ -41,14 +41,6 @@ def read_prop_prop_instance(file: BinaryIO):
     for i in range(3):
         prop.translation[i] = float4(file)
 
-    # prop.coordinates = read_coordinates(file)
-    # # print(prop.coordinates)
-    # prop.translation = read_translation(file)
-    # # print(prop.translation)
-    # prop.scale = get_scale(prop.coordinates)
-    # # print(prop.scale)
-    # unscale(prop.coordinates, prop.scale)
-
     prop.decal = bool1(file)
     # print('Decal: ', prop.decal)
     file.read(7)  # flags from logic_decal to animated
@@ -56,14 +48,16 @@ def read_prop_prop_instance(file: BinaryIO):
     # print('Decal parallax: ', prop.decal_parallax_scale)
     prop.decal_tiling = float4(file)
     # print('Decal tiling: ', prop.decal_tiling)
-    bool1(file)
+    decal_override_gbuffer_normal = bool1(file)
 
     prop.flags = read_flags(file)
+    prop.flags["decal_override_gbuffer_normal"] =  decal_override_gbuffer_normal
 
-    bool1(file)
-    bool1(file)
-    bool1(file)
-    bool1(file)
+    prop.flags["visible_in_shroud"] = bool1(file)
+    prop.flags["decal_apply_to_terrain"] = bool1(file)
+    prop.flags["decal_apply_to_gbuffer_objects"] = bool1(file)
+    prop.flags["decal_render_above_snow"] = bool1(file)
+
     prop.height_mode = string(file)
     # print('Height mode: ', prop.height_mode)
     if version == 15:

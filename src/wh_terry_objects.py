@@ -45,7 +45,7 @@ class TerryParticle:
 
 class TerryDecal:
     model_path: str
-    parallax_scale: int
+    parallax_scale: float
     tiling: int
     normal_mode: str
     flags: Dict[str, bool]

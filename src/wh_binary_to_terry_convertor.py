@@ -66,13 +66,19 @@ def convert_particle(particle: Particle) -> TerryParticle:
 
 def convert_decal(prop: Prop) -> TerryDecal:
     terry_decal = TerryDecal()
-    print(prop.__dict__)
     terry_decal.ectransform = ECTransform()
     terry_decal.ecterrainclamp = ECTerrainClamp()
     terry_decal.ecbattleproperties = ECBattleProperties()
-
+    if prop.flags["decal_override_gbuffer_normal"] == True:
+        terry_decal.normal_mode = "DNM_DECAL_OVERRIDE"
+    else:
+        terry_decal.normal_mode = "DNM_BLEND"
+    terry_decal.flags = {}
+    terry_decal.flags["apply_to_terrain"] = prop.flags["decal_apply_to_terrain"]
+    terry_decal.flags["apply_to_objects"] = prop.flags["decal_apply_to_gbuffer_objects"]
+    terry_decal.flags["render_above_snow"] = prop.flags["decal_render_above_snow"]
     terry_decal.model_path = prop.key
-    terry_decal.parallax_scale = int(prop.decal_parallax_scale)
+    terry_decal.parallax_scale = prop.decal_parallax_scale
     terry_decal.tiling = int(prop.decal_tiling)
     terry_decal.ectransform.position = []
 
