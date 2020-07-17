@@ -1,3 +1,4 @@
+import random
 from xml.etree.ElementTree import Element, SubElement, tostring
 from typing import Dict, List
 from wh_terry_objects import ECTransform, ECMeshRenderSettings, ECBattleProperties, ECTerrainClamp

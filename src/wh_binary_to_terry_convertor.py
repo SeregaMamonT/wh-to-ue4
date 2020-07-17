@@ -40,7 +40,7 @@ def convert_building(building: Building) -> TerryBuilding:
     return terry_building
 
 
-def convert_particle(particle: Particle):
+def convert_particle(particle: Particle) -> TerryParticle:
     terry_particle = TerryParticle()
     terry_particle.ectransform = ECTransform()
     terry_particle.ecterrainclamp = ECTerrainClamp()

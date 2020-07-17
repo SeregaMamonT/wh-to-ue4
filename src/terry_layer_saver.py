@@ -1,7 +1,7 @@
 from wh_binary_objects import Prefab, MapData
 from enum import Enum
 from xml.etree.ElementTree import Element, SubElement, tostring
-from wh_binary_to_terry_convertor import convert_building
+from wh_binary_to_terry_convertor import convert_building, convert_particle
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -24,7 +24,7 @@ def prefab_saver(filename, prefab_data: tuple):
     #    convert_building(i)
     entities = Element("entities")
     save_buildings_list(list(map(convert_building, prefab.buildings)), entities)
-    save_particles_list(prefab.particles, entities)
+    save_particles_list(list(map(convert_particle, prefab.particles)), entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 

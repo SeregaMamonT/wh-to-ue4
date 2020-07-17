@@ -1,4 +1,4 @@
-import random
+
 from xml.etree.ElementTree import Element, SubElement, tostring
 from typing import Dict, List
 from wh_binary_to_terry_convertor import convert_particle
@@ -9,9 +9,9 @@ from wh_binary_objects import Particle
 from wh_terry_objects import TerryParticle
 
 
-def save_particles_list(particles: List[Particle], entities: Element):
-    for particle in particles:
-        terry_particle = convert_particle(particle)
+def save_particles_list(particles: List[TerryParticle], entities: Element):
+    for terry_particle in particles:
+        # terry_particle = convert_particle(particle)
         entity = create_entity_node(entities)
 
         ECVFX = SubElement(entity, "ECVFX", {
