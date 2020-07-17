@@ -1,4 +1,4 @@
-from wh_terry_objects import TerryBuilding, ECTransform
+from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings
 from typing import BinaryIO, List
 from wh_binary_objects import Building
 
@@ -13,6 +13,7 @@ def mod_vector(vector: List):
 def convert_building(building: Building):
     terry_building = TerryBuilding()
     terry_building.ectransform = ECTransform()
+    terry_building.ecmeshrendersettings = ECMeshRenderSettings()
     terry_building.key = building.building_key
     terry_building.damage = int(building.starting_damage_unary * 100)
     terry_building.ectransform.position = []
@@ -27,6 +28,6 @@ def convert_building(building: Building):
         for j in range(3):
             coordinates[i][j] /= scale
     terry_building.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
-
+    terry_building.ecmeshrendersettings.cast_shadow = building.flags["cast_shadows"]
     # print(terry_building.ectransform.__dict__)
     return terry_building
