@@ -1,3 +1,4 @@
+import random
 from xml.etree.ElementTree import Element, SubElement, tostring
 from typing import Dict, List
 from wh_terry_objects import ECTransform, ECMeshRenderSettings, ECBattleProperties, ECTerrainClamp
@@ -5,6 +6,12 @@ from wh_terry_objects import ECTransform, ECMeshRenderSettings, ECBattleProperti
 
 def format_float(x):
     return "{:.5f}".format(x).rstrip("0").strip(".")
+
+
+def create_entity_node(entities: Element):
+    entity = SubElement(entities, "entity", {"id": hex(random.randrange(10 ** 17, 10 ** 18))[2:]})
+
+    return entity
 
 
 def ectransform_to_xml(entity: Element, ectransform: ECTransform):
