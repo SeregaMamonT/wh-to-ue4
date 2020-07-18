@@ -156,6 +156,8 @@ def parse_map():
     else:
         raise Exception('bmd_data.bin not found')
     vegetations = list(map(read_map_vegetation_file, find_map_vegetations()))
+    map_data = (parsed_map, vegetations)
+    terry_layer_saver("map_name", map_data, StructureType.MAP)
     return parsed_map, vegetations
 
 

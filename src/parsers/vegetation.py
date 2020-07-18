@@ -11,13 +11,13 @@ def read_tree(file):
     tree.key = string(file)
     amount = int4(file)
     tree.props = []
-    print(tree.key)
+    # print(tree.key)
     for i in range(amount):
         props = PrefabTreeProps()
         props.position = (float4(file), float4(file), float4(file))
         props.scale = float4(file)
         props.is_freeform = bool1(file)
-        #print(props.__dict__)
+        # print(props.__dict__)
         tree.props.append(props)
     return tree
 
@@ -57,11 +57,11 @@ def read_map_tree_list_v1(file):
 
 def read_map_tree_list_v2(file):
     amount = int4(file)
-    prefab_tree_list = []
+    # print(amount)
+    map_tree_list = []
     for i in range(amount):
-       prefab_tree_list.append(read_tree(file))
-
-    return prefab_tree_list
+       map_tree_list.append(read_tree(file))
+    return map_tree_list
 
 
 version_readers = {

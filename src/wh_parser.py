@@ -126,7 +126,7 @@ def read_map(file: BinaryIO, global_context):
         # print(map.__dict__)
         # print('Hooray it did not crash!')
 
-        return map.buildings
+        return map
     else:
         raise Exception('Only versions 2, 23, 24 of root are supported')
 
@@ -144,6 +144,8 @@ def read_prefab_vegetation(file: BinaryIO):
 def read_map_vegetation(file: BinaryIO):
     file.read(8)  # FASTBIN0
     map_vegetation = read_map_vegetation_list(file)
+
+    return map_vegetation
     # for i in map_vegetation:
     #    print(i.__dict__)
 

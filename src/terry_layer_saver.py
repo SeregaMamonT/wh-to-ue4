@@ -47,8 +47,24 @@ def prefab_saver(filename, prefab_data: tuple):
     save_to_file(content, filename + ".xml")
 
 
-def map_saver(filename, map: tuple):
-    return
+def map_saver(filename, map_data_tuple: tuple):
+    map_data = map_data_tuple[0]
+    vegetation = map_data_tuple[1]
+    entities = Element("entities")
+    save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
+    save_particles_list(list(map(convert_particle, map_data.particles)), entities)
+    for key, props in map_data.props.items():
+        decals = filter(lambda prop: prop.decal, props)
+        not_decals = filter(lambda prop: not prop.decal, props)
+        save_decals_list(list(map(convert_decal, decals)), entities)
+        save_prop_buildings_list(list(map(convert_prop_building, not_decals)), entities)
+    save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
+    for i in vegetation:
+        for j in i:
+            save_tree_list(convert_tree_instance(j), entities)
+
+    content = tostring(entities, "utf-8").decode("utf-8")
+    save_to_file(content, filename + ".xml")
 
 
 def get_type_saver(type):
