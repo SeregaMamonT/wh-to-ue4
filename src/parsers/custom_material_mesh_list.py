@@ -17,6 +17,8 @@ def read_custom_material_mesh(file):
     custom_material_mesh.indices = []
     for i in range(indices_amount):
         custom_material_mesh.indices.append(int2(file))
+    # for i in custom_material_mesh.vertices:
+        # print(i.__dict__)
     custom_material_mesh.material = string(file)
     custom_material_mesh.height_mode = string(file)
 

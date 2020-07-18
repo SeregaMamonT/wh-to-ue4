@@ -1,7 +1,9 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
-    ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree
+    ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
+    TerryTerrainHole
 from typing import BinaryIO, List
-from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, PrefabTreeProps
+from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
+    TerrainStencilTriangle
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -95,9 +97,7 @@ def convert_decal(prop: Prop) -> TerryDecal:
     # print(prop.flags)
     terry_decal.ecterrainclamp.terrain_oriented = True
 
-
     return terry_decal
-
 
 
 def convert_prop_building(prop: Prop) -> TerryPropBuilding:
@@ -157,7 +157,6 @@ def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
     for i in temp_angles:
         terry_prefab_instance.ectransform.rotation.append(-i)
 
-
     return terry_prefab_instance
 
 
@@ -183,3 +182,46 @@ def convert_tree_instance(tree: Tree) -> List[TerryTree]:
         terry_tree_list.append(terry_tree)
 
     return terry_tree_list
+
+
+def convert_custom_material_mesh(custom_material_mesh: CustomMaterialMesh) -> TerryCustomMaterialMesh:
+    terry_custom_material_mesh = TerryCustomMaterialMesh()
+    terry_custom_material_mesh.ectransform = ECTransform()
+    terry_custom_material_mesh.polyline = []
+    terry_custom_material_mesh.material = custom_material_mesh.material
+    # calculate tranform from first vertex
+    position_x = custom_material_mesh.vertices[0].x
+    position_y = custom_material_mesh.vertices[0].y
+    position_z = custom_material_mesh.vertices[0].z
+    terry_custom_material_mesh.ectransform.position = [position_x, position_y, position_z]
+    terry_custom_material_mesh.ectransform.rotation = [0, 0, 0]
+    terry_custom_material_mesh.ectransform.scale = [1, 1, 1]
+    # subtract position from poluline points
+    for i in custom_material_mesh.vertices:
+        x = i.x - position_x
+        y = i.z - position_z
+        point = Point2D(x, y)
+        # print(point.__dict__)
+        terry_custom_material_mesh.polyline.append(point)
+
+    return terry_custom_material_mesh
+
+
+def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:
+    terry_terrain_hole = TerryTerrainHole()
+    terry_terrain_hole.ectransform = ECTransform()
+    temp_triangles = triangles
+    for trianlge in temp_triangles:
+        temp_triangles.remove(trianlge)
+        temp2_triangles = [trianlge]
+        i = triangles[0]
+        #for i in temp_triangles:
+        if (trianlge.position1 == i.position1) or (trianlge.position2 == i.position2) or (
+                trianlge.position3 == i.position3):
+            temp2_triangles.append(i)
+            temp_triangles.remove(i)
+    print(temp2_triangles, )
+
+    # terrain_stencil_triangle.
+
+    return terry_terrain_hole

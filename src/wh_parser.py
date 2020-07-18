@@ -24,7 +24,6 @@ from parsers.prop_list import read_prop_list
 from parsers.particle_emitter_list import read_particle_list
 from parsers.ai_hints import read_ai_hints
 
-
 from parsers.light_probe_list import read_light_probe_list
 from parsers.terrain_stencil_triangle_list import read_terrain_stencil_triangle_list
 from parsers.point_light_list import read_point_light_list
@@ -81,6 +80,43 @@ def read_prefab(file: BinaryIO, global_context):
         raise Exception('Only versions 23, 24 of root are supported')
 
 
+def print_map_stats(map: MapData):
+    buildings = []
+    for i in map.buildings:
+        if i.building_key not in buildings:
+            buildings.append(i.building_key)
+    print("Buildings: ", len(map.buildings), buildings)
+    print("Capture locations: ", len(map.capture_locations))
+    print("Go outline: ", len(map.go_outlines))
+    print("Non terrain outlines: ", len(map.non_terrain_outlines))
+    print("Zones templates: ", len(map.zones_templates))
+    prefabs = []
+    for i in map.prefab_instances:
+        if i.name not in prefabs:
+            prefabs.append(i.name)
+    print("Prefabs: ", len(map.prefab_instances), prefabs)
+    props_amount = 0
+    for i in map.props.items():
+        props_amount = props_amount + len(i)
+    props = []
+    for i in map.props.keys():
+        if i not in props:
+            props.append(i)
+    print("Props: ", props_amount,  props)
+    particles = []
+    for i in map.particles:
+        if i.model_name not in particles:
+            particles.append(i.model_name)
+    print("Particles: ", len(map.particles), particles)
+    print("Ai hints: ", "Separators: ", len(map.ai_hints.separators), "Polylines: ",
+          len(map.ai_hints.polylines))
+    print("Light probes: ", len(map.light_probes))
+    print("Terrain stencil triangles: ", len(map.terrain_stencil_triangle))
+    print("Point lights: ", len(map.point_lights))
+    print("Building projectile emitters: ", len(map.building_projectile_emitters))
+    print("Spot lights: ", len(map.spot_lights))
+    print("Sound shapes: ", len(map.sound_shapes))
+
 @offset_error_logger
 def read_map(file: BinaryIO, global_context):
     global context
@@ -123,8 +159,9 @@ def read_map(file: BinaryIO, global_context):
         read_composite_scene_list(file)
         map.deployment = read_deployment_list(file)
         read_bmd_catchment_area_list(file)
-        # print(map.__dict__)
         # print('Hooray it did not crash!')
+
+        print_map_stats(map)
 
         return map
     else:
@@ -148,7 +185,3 @@ def read_map_vegetation(file: BinaryIO):
     return map_vegetation
     # for i in map_vegetation:
     #    print(i.__dict__)
-
-
-
-

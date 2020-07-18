@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from app_typing import Matrix, Vector
 
+from wh_binary_objects import Point2D
 
 class ECTransform:
     position: List[float]
@@ -74,3 +75,17 @@ class TerryTree:
     key: str
     ectransform: ECTransform
     ecterrainclamp: ECTerrainClamp
+
+
+class TerryCustomMaterialMesh:
+    material: str
+    affects_protection_map: bool
+    polyline: List[Point2D]
+    ectransform: ECTransform
+
+
+class TerryTerrainHole:
+    procedural_exclusion_zone: bool
+    procedural_exclusion_zone_margin: int
+    ectransform: ECTransform
+    polyline: List[Point2D]

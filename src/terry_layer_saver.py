@@ -2,7 +2,7 @@ from wh_binary_objects import Prefab, MapData
 from enum import Enum
 from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
-    convert_prefab_instance, convert_tree_instance
+    convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -10,6 +10,7 @@ from terry_savers.terry_decals_list import save_decals_list
 from terry_savers.terry_prop_building_list import save_prop_buildings_list
 from terry_savers.terry_prefab_insatnce_list import save_prefab_instance_list
 from terry_savers.terry_tree_list import save_tree_list
+from terry_savers.terry_custom_material_mesh_list import save_custom_material_mesh_list
 
 class StructureType(Enum):
     PREFAB = 1
@@ -51,18 +52,21 @@ def map_saver(filename, map_data_tuple: tuple):
     map_data = map_data_tuple[0]
     vegetation = map_data_tuple[1]
     entities = Element("entities")
-    save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
-    save_particles_list(list(map(convert_particle, map_data.particles)), entities)
-    for key, props in map_data.props.items():
-        decals = filter(lambda prop: prop.decal, props)
-        not_decals = filter(lambda prop: not prop.decal, props)
-        save_decals_list(list(map(convert_decal, decals)), entities)
-        save_prop_buildings_list(list(map(convert_prop_building, not_decals)), entities)
-    save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
-    for i in vegetation:
-        for j in i:
-            save_tree_list(convert_tree_instance(j), entities)
-
+    #save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
+    #save_particles_list(list(map(convert_particle, map_data.particles)), entities)
+    # for key, props in map_data.props.items():
+    #     decals = filter(lambda prop: prop.decal, props)
+    #     not_decals = filter(lambda prop: not prop.decal, props)
+    #     save_decals_list(list(map(convert_decal, decals)), entities)
+    #     save_prop_buildings_list(list(map(convert_prop_building, not_decals)), entities)
+    #save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
+    # for i in vegetation:
+    #    for j in i:
+    #        save_tree_list(convert_tree_instance(j), entities)
+    # for i in map_data.custom_material_meshes:
+    #    convert_custom_material_mesh(i)
+    save_custom_material_mesh_list(list(map(convert_custom_material_mesh, map_data.custom_material_meshes)), entities)
+    convert_terrain_stencil_triangle(map_data.terrain_stencil_triangle)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 
