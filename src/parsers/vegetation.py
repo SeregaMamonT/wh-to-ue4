@@ -11,11 +11,13 @@ def read_tree(file):
     tree.key = string(file)
     amount = int4(file)
     tree.props = []
+    print(tree.key)
     for i in range(amount):
         props = PrefabTreeProps()
         props.position = (float4(file), float4(file), float4(file))
         props.scale = float4(file)
         props.is_freeform = bool1(file)
+        #print(props.__dict__)
         tree.props.append(props)
     return tree
 

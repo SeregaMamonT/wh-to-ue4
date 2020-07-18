@@ -1,7 +1,7 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
-    ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance
+    ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree
 from typing import BinaryIO, List
-from wh_binary_objects import Building, Particle, Prop, PrefabInstance
+from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, PrefabTreeProps
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -129,7 +129,9 @@ def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
     terry_prefab_instance = TerryPrefabInstance()
     terry_prefab_instance.ectransform = ECTransform()
     terry_prefab_instance.ecterrainclamp = ECTerrainClamp()
-    terry_prefab_instance.key = prefab.name
+    temp_string = prefab.name.replace('prefabs/', '')
+    temp_string = temp_string.replace(".bmd", '')
+    terry_prefab_instance.key = temp_string
     terry_prefab_instance.ectransform.position = []
 
     # transform
@@ -156,5 +158,28 @@ def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
         terry_prefab_instance.ectransform.rotation.append(-i)
 
 
-
     return terry_prefab_instance
+
+
+def convert_tree_instance(tree: Tree) -> List[TerryTree]:
+    terry_tree_list = []
+    for i in tree.props:
+        terry_tree = TerryTree()
+        temp_string = tree.key.replace('BattleTerrain/vegetation/', '')
+        temp_string = temp_string.replace('.rigid_model_v2', '')
+        terry_tree.key = temp_string
+        terry_tree.ecterrainclamp = ECTerrainClamp()
+        terry_tree.ectransform = ECTransform()
+        terry_tree.ectransform.position = []
+        terry_tree.ectransform.rotation = []
+        terry_tree.ectransform.scale = []
+        terry_tree.ectransform.position.append(i.position[0])
+        terry_tree.ectransform.position.append(i.position[1])
+        terry_tree.ectransform.position.append(i.position[2])
+        for j in range(3):
+            terry_tree.ectransform.rotation.append(0)
+        for j in range(3):
+            terry_tree.ectransform.scale.append(i.scale)
+        terry_tree_list.append(terry_tree)
+
+    return terry_tree_list

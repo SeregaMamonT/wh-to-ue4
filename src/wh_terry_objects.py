@@ -68,3 +68,9 @@ class TerryPrefabInstance:
     key: str
     ectransform: ECTransform
     ecterrainclamp: ECTerrainClamp
+
+
+class TerryTree:
+    key: str
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
