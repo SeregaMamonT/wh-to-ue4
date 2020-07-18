@@ -17,7 +17,7 @@ def save_particles_list(particles: List[TerryParticle], entities: Element):
             "scale": "1",
             "instance_name": "",
         })
-        ecterrainclamp_to_xml(entity, terry_particle.ectransform)
+        ecterrainclamp_to_xml(entity, terry_particle.ecterrainclamp)
         ectransform_to_xml(entity, terry_particle.ectransform)
         ecbattleproperties_to_xml(entity, terry_particle.ecbattleproperties)
 

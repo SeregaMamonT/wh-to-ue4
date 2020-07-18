@@ -18,7 +18,7 @@ def save_decals_list(decals: List[TerryDecal], entities: Element):
             "apply_to_objects": s_bool(terry_decal.flags["apply_to_objects"]),
             "render_above_snow": s_bool(terry_decal.flags["render_above_snow"]),
         })
-        ecterrainclamp_to_xml(entity, terry_decal.ectransform)
+        ecterrainclamp_to_xml(entity, terry_decal.ecterrainclamp)
         ectransform_to_xml(entity, terry_decal.ectransform)
         ecbattleproperties_to_xml(entity, terry_decal.ecbattleproperties)
 

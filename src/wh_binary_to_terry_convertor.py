@@ -1,5 +1,5 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
-    ECBattleProperties, TerryDecal
+    ECBattleProperties, TerryDecal, TerryPropBuilding
 from typing import BinaryIO, List
 from wh_binary_objects import Building, Particle, Prop
 
@@ -92,5 +92,34 @@ def convert_decal(prop: Prop) -> TerryDecal:
         for j in range(3):
             coordinates[i][j] /= scale
     terry_decal.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    # print(prop.flags)
+    terry_decal.ecterrainclamp.terrain_oriented = True
+
 
     return terry_decal
+
+
+
+def convert_prop_building(prop: Prop) -> TerryPropBuilding:
+    terry_prop_building = TerryPropBuilding()
+    terry_prop_building.ectransform = ECTransform()
+    terry_prop_building.ecterrainclamp = ECTerrainClamp()
+    terry_prop_building.ecbattleproperties = ECBattleProperties()
+    terry_prop_building.ecmeshrendersettings = ECMeshRenderSettings()
+    terry_prop_building.model_path = prop.key
+    terry_prop_building.ectransform.position = []
+
+    for i in range(3):
+        terry_prop_building.ectransform.position.append(prop.translation[i])
+
+    coordinates = prop.coordinates
+    terry_prop_building.ectransform.scale = list(map(mod_vector, coordinates))
+    for i in range(3):
+        scale = terry_prop_building.ectransform.scale[i]
+        for j in range(3):
+            coordinates[i][j] /= scale
+    terry_prop_building.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+
+    terry_prop_building.ecmeshrendersettings.cast_shadow = True
+
+    return terry_prop_building

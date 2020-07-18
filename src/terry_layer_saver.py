@@ -1,11 +1,12 @@
 from wh_binary_objects import Prefab, MapData
 from enum import Enum
 from xml.etree.ElementTree import Element, SubElement, tostring
-from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal
+from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
 from terry_savers.terry_decals_list import save_decals_list
+from terry_savers.terry_prop_building_list import save_prop_buildings_list
 
 class StructureType(Enum):
     PREFAB = 1
@@ -27,7 +28,10 @@ def prefab_saver(filename, prefab_data: tuple):
     save_particles_list(list(map(convert_particle, prefab.particles)), entities)
     for key, props in prefab.props.items():
         decals = filter(lambda prop: prop.decal, props)
+        not_decals = filter(lambda prop: not prop.decal, props)
         save_decals_list(list(map(convert_decal, decals)), entities)
+        save_prop_buildings_list(list(map(convert_prop_building, not_decals)), entities)
+
     # props = filter(lambda prop: not prop.decal, prefab.props)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")

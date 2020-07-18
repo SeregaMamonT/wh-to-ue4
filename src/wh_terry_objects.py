@@ -52,3 +52,13 @@ class TerryDecal:
     ectransform: ECTransform
     ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
+
+
+class TerryPropBuilding:
+    model_path: str
+    animation_path: str
+    opacity: int
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
+    ecbattleproperties: ECBattleProperties
+    ecmeshrendersettings: ECMeshRenderSettings
