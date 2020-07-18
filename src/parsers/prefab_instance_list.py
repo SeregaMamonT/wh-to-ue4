@@ -15,6 +15,7 @@ def read_prefab_instance(file):
         row = [float4(file), float4(file), float4(file), float4(file)]
         prefab_instance.transformation.append(row)
 
+    # print(prefab_instance.transform)
     property_overrides = int4(file)
     # print('Property overrides: ', property_overrides)
     for j in range(property_overrides):

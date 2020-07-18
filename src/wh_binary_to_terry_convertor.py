@@ -1,7 +1,7 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
-    ECBattleProperties, TerryDecal, TerryPropBuilding
+    ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance
 from typing import BinaryIO, List
-from wh_binary_objects import Building, Particle, Prop
+from wh_binary_objects import Building, Particle, Prop, PrefabInstance
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -123,3 +123,38 @@ def convert_prop_building(prop: Prop) -> TerryPropBuilding:
     terry_prop_building.ecmeshrendersettings.cast_shadow = True
 
     return terry_prop_building
+
+
+def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
+    terry_prefab_instance = TerryPrefabInstance()
+    terry_prefab_instance.ectransform = ECTransform()
+    terry_prefab_instance.ecterrainclamp = ECTerrainClamp()
+    terry_prefab_instance.key = prefab.name
+    terry_prefab_instance.ectransform.position = []
+
+    # transform
+    translation = []
+    for i in range(3):
+        translation.append(prefab.transformation[3][i])
+
+    temp_coordinates = [[None] * 3 for i in range(3)]
+    for i in range(9):
+        temp_coordinates[i // 3][i % 3] = prefab.transformation[i // 3][i % 3]
+
+    for i in range(3):
+        terry_prefab_instance.ectransform.position.append(translation[i])
+
+    coordinates = temp_coordinates
+    terry_prefab_instance.ectransform.scale = list(map(mod_vector, coordinates))
+    for i in range(3):
+        scale = terry_prefab_instance.ectransform.scale[i]
+        for j in range(3):
+            coordinates[i][j] /= scale
+    temp_angles = degrees_tuple(get_angles_XYZ(coordinates))
+    terry_prefab_instance.ectransform.rotation = []
+    for i in temp_angles:
+        terry_prefab_instance.ectransform.rotation.append(-i)
+
+
+
+    return terry_prefab_instance

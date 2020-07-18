@@ -62,3 +62,9 @@ class TerryPropBuilding:
     ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
     ecmeshrendersettings: ECMeshRenderSettings
+
+
+class TerryPrefabInstance:
+    key: str
+    ectransform: ECTransform
+    ecterrainclamp: ECTerrainClamp
