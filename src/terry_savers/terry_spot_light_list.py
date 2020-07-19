@@ -19,6 +19,6 @@ def save_spot_light_list(spot_lights: List[TerrySpotLight], entities: Element):
             "outer_angle": s_float(spot_light.outer_angle),
             "falloff": s_float(spot_light.falloff),
             "volumetric": s_bool(spot_light.volumetric),
-            "gobo": s_float(spot_light.gobo),
+            "gobo": spot_light.gobo,
         })
         ectransform_to_xml(entity, spot_light.ectransform)

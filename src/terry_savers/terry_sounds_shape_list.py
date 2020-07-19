@@ -8,12 +8,14 @@ from wh_terry_objects import TerrySoundShape
 
 
 def save_sound_shape_sphere(sound_shape: TerrySoundShape, entity):
+    ectransform_to_xml(entity, sound_shape.ectransform)
     ECSphere = SubElement(entity, "ECSphere", {
         "radius": s_float(sound_shape.radius),
     })
 
 
 def save_sound_shape_point_cloud(sound_shape: TerrySoundShape, entity):
+    ectransform_to_xml(entity, sound_shape.ectransform)
     ECPointCloud = SubElement(entity, "ECSphere", {
     })
     point_cloud = SubElement(ECPointCloud, "point_cloud", {
@@ -27,10 +29,11 @@ def save_sound_shape_point_cloud(sound_shape: TerrySoundShape, entity):
 
 
 def save_sound_shape_point(sound_shape: TerrySoundShape, entity):
-    return
+    ectransform_to_xml(entity, sound_shape.ectransform)
 
 
 def save_sound_shape_polyline(sound_shape: TerrySoundShape, entity):
+    ectransform_to_xml(entity, sound_shape.ectransform)
     ECPolyline = SubElement(entity, "ECPolyline", {
     })
     polyline = SubElement(ECPolyline, "polyline", {
@@ -45,7 +48,12 @@ def save_sound_shape_polyline(sound_shape: TerrySoundShape, entity):
     })
 
 
+def save_sound_shape_river(sound_shape: TerrySoundShape, entity):
+    return
+
+
 type_savers = {
+    "SST_RIVER": save_sound_shape_river,
     "SST_POINT": save_sound_shape_point,
     "SST_SPHERE": save_sound_shape_sphere,
     "SST_MULTI_POINT": save_sound_shape_point_cloud,
@@ -66,6 +74,5 @@ def save_sound_shape_list(sound_shapes: List[TerrySoundShape], entities: Element
         ECSoundMarker = SubElement(entity, "ECSoundMarker", {
             "key": sound_shape.key,
         })
-        ectransform_to_xml(entity, sound_shape.ectransform)
         get_type_saver(sound_shape.type)(sound_shape, entity)
 

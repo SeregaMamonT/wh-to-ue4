@@ -29,6 +29,9 @@ def read_sound_shape_v6(file):
     sound_shape.height_mode = string(file)
     sound_shape.campaign_type_mask = int4(file)
     sound_shape.pdlc_mask = int4(file)
+    #print(sound_shape.__dict__)
+
+    return sound_shape
 
 
 def read_sound_shape_v7(file):
