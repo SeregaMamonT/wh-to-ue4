@@ -3,7 +3,7 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
     read_translation, get_scale, unscale
 
-from wh_binary_objects import SpotLight
+from wh_binary_objects import SpotLight, ColourRGB
 
 
 def read_spot_light_v5(file):
@@ -13,7 +13,7 @@ def read_spot_light_v5(file):
     spot_light.length = float4(file)
     spot_light.inner_angle = float4(file)
     spot_light.outer_angle = float4(file)
-    spot_light.colour = (float4(file), float4(file), float4(file))
+    spot_light.colour = ColourRGB(float4(file), float4(file), float4(file))
     spot_light.falloff = float4(file)
     spot_light.gobo = string(file)
     spot_light.flags = {}
@@ -31,7 +31,7 @@ def read_spot_light_v6(file):
     spot_light.length = float4(file)
     spot_light.inner_angle = float4(file)
     spot_light.outer_angle = float4(file)
-    spot_light.colour = (float4(file), float4(file), float4(file))
+    spot_light.colour = ColourRGB(float4(file), float4(file), float4(file))
     spot_light.falloff = float4(file)
     spot_light.gobo = string(file)
     spot_light.flags = {}

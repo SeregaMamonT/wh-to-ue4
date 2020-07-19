@@ -96,15 +96,33 @@ class TerryLightProbe:
     is_primary: bool
     ectransform: ECTransform
 
+class TerryPlayableArea:
+    width: float
+    height: float
+    deployment_locations: List[str]
+    ectransform: ECTransform
+
 
 class TerryPointLight:
     colour: ColourRGBA
-    colour_scale: int
-    radius: int
+    colour_scale: float
+    radius: float
     animation_type: str
     animation_speed_scale: tuple
-    colour_min: int
-    random_offset: int
+    colour_min: float
+    random_offset: float
     falloff_type: str
     for_light_probes_only: bool
+    ectransform: ECTransform
+
+
+class TerrySpotLight:
+    colour: ColourRGBA
+    intensity: float
+    length: float
+    inner_angle: float
+    outer_angle: float
+    falloff: float
+    volumetric: bool
+    gobo: str
     ectransform: ECTransform

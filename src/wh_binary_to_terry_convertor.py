@@ -1,11 +1,11 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
-    TerryTerrainHole, TerryLightProbe, TerryPointLight
+    TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight
 
 from typing import BinaryIO, List
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
-    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA
+    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -231,11 +231,11 @@ animation_type = {
 def convert_point_light(point_light: PointLight) -> TerryPointLight:
     terry_point_light = TerryPointLight()
     terry_point_light.ectransform = ECTransform()
-    terry_point_light.radius = int(point_light.radius)
-    terry_point_light.colour_scale = int(point_light.colour_scale)
+    terry_point_light.radius = point_light.radius
+    terry_point_light.colour_scale = point_light.colour_scale
     terry_point_light.animation_type = animation_type[point_light.animation_type]
-    terry_point_light.colour_min = int(point_light.colour_min)
-    terry_point_light.random_offset = int(point_light.random_offset)
+    terry_point_light.colour_min = point_light.colour_min
+    terry_point_light.random_offset = point_light.random_offset
     terry_point_light.ectransform.position = point_light.position
     terry_point_light.falloff_type = point_light.falloff_type
     terry_point_light.for_light_probes_only = point_light.flags["light_probes_only"]
@@ -246,8 +246,48 @@ def convert_point_light(point_light: PointLight) -> TerryPointLight:
     terry_point_light.colour = ColourRGBA(int(point_light.colour.red * 255), int(point_light.colour.green * 255),
                                           int(point_light.colour.blue * 255), 255)
 
-
     return terry_point_light
+
+
+def convert_playable_area(playable_area: PlayableArea) -> TerryPlayableArea:
+    terry_playable_area = TerryPlayableArea()
+    terry_playable_area.ectransform = ECTransform()
+    terry_playable_area.width = playable_area.max_x - playable_area.min_x
+    terry_playable_area.height = playable_area.max_y - playable_area.min_y
+    x = playable_area.min_x + (terry_playable_area.width / 2)
+    z = playable_area.min_y + (terry_playable_area.height / 2)
+    terry_playable_area.ectransform.position = [x, 0, z]
+    terry_playable_area.ectransform.rotation = [0, 0, 0]
+    terry_playable_area.ectransform.scale = [1, 1, 1]
+    terry_playable_area.deployment_locations = []
+    for key, value in playable_area.flags.items():
+        if value:
+            temp_string = key.replace('valid_', '').capitalize()
+            terry_playable_area.deployment_locations.append(temp_string)
+
+    return terry_playable_area
+
+
+def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
+    terry_spot_light = TerrySpotLight()
+    terry_spot_light.ectransform = ECTransform()
+    terry_spot_light.ectransform.position = spot_light.position
+    terry_spot_light.ectransform.rotation = [0, 0, 0]
+    terry_spot_light.ectransform.scale = [1, 1, 1]
+    # colours
+    max_color = max(spot_light.colour.red, spot_light.colour.green, spot_light.colour.blue)
+    terry_spot_light.intensity = max_color
+    terry_spot_light.colour = ColourRGBA(int(spot_light.colour.red/max_color * 255), int(spot_light.colour.green/max_color * 255),
+                                         int(spot_light.colour.blue/max_color * 255), 255)
+    terry_spot_light.length = spot_light.length
+    veird_constant = 57.2957549
+    terry_spot_light.inner_angle = spot_light.inner_angle*veird_constant
+    terry_spot_light.outer_angle = spot_light.outer_angle*veird_constant
+    terry_spot_light.falloff = spot_light.falloff
+    terry_spot_light.volumetric = spot_light.flags["volumetric"]
+    terry_spot_light.gobo = spot_light.gobo
+
+    return terry_spot_light
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:

@@ -33,7 +33,7 @@ def read_point_light_v5(file):
     point_light = PointLight()
     point_light.position = (float4(file), float4(file), float4(file))
     point_light.radius = float4(file)
-    point_light.colour = (float4(file), float4(file), float4(file))
+    point_light.colour = ColourRGB(float4(file), float4(file), float4(file))
     point_light.colour_scale = float4(file)
     point_light.animation_type = int1(file)
     point_light.params = (float4(file), float4(file))
