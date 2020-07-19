@@ -1,11 +1,11 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
-    TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight
+    TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape
 
 from typing import BinaryIO, List
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
-    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight
+    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -288,6 +288,41 @@ def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
     terry_spot_light.gobo = spot_light.gobo
 
     return terry_spot_light
+
+
+def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
+    terry_sound_shape = TerrySoundShape()
+    terry_sound_shape.ectransform = ECTransform()
+    terry_sound_shape.key = sound_shape.key
+    terry_sound_shape.type = sound_shape.type
+    position_x = sound_shape.points[0].x
+    position_y = sound_shape.points[0].y
+    position_z = sound_shape.points[0].z
+    terry_sound_shape.ectransform.position = [position_x, position_y, position_z]
+    terry_sound_shape.ectransform.rotation = [0, 0, 0]
+    terry_sound_shape.ectransform.scale = [1, 1, 1]
+    # subtract position from poluline points
+    if terry_sound_shape.type == "SST_MULTI_POINT":
+        terry_sound_shape.points_cloud = []
+        for i in sound_shape.points:
+            x = i.x - position_x
+            y = i.y - position_y
+            z = i.z - position_z
+            point = Point3D(x, y, z)
+            terry_sound_shape.points_cloud.append(point)
+    else:
+        terry_sound_shape.points = []
+        for i in sound_shape.points:
+            x = i.x - position_x
+            y = i.z - position_z
+            point = Point2D(x, y)
+            terry_sound_shape.points.append(point)
+
+    terry_sound_shape.radius = sound_shape.outer_radius
+
+    return terry_sound_shape
+
+
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:

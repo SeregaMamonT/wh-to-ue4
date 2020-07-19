@@ -126,3 +126,12 @@ class TerrySpotLight:
     volumetric: bool
     gobo: str
     ectransform: ECTransform
+
+
+class TerrySoundShape:
+    key: str
+    type: str
+    radius: float
+    points: List[Point2D]
+    points_cloud: List[Point3D]
+    ectransform: ECTransform

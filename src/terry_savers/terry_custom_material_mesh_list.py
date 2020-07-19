@@ -2,7 +2,7 @@ from xml.etree.ElementTree import Element, SubElement
 from typing import List
 
 from terry_savers.xml_saver_utils import ectransform_to_xml, ecmeshrendersettings_to_xml, ecterrainclamp_to_xml, s_bool, \
-    create_entity_node
+    create_entity_node, s_float
 
 from wh_terry_objects import TerryCustomMaterialMesh
 
@@ -22,7 +22,7 @@ def save_custom_material_mesh_list(custom_material_meshes: List[TerryCustomMater
         })
         for i in mesh.polyline:
             point = SubElement(polyline, "point", {
-                "x": str(i.x),
-                "y": str(i.y),
+                "x": s_float(i.x),
+                "y": s_float(i.y),
             })
 

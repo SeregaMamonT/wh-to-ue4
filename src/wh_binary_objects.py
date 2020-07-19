@@ -217,7 +217,7 @@ class CustomMaterialMesh:
 
 class SoundShape:
     key: str
-    typ: str
+    type: str
     points: List[Point3D]
     inner_radius: float
     outer_radius: float

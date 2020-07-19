@@ -3,7 +3,7 @@ from enum import Enum
 from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
     convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle, \
-    convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light
+    convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light, convert_sound_shape
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -13,9 +13,10 @@ from terry_savers.terry_prefab_insatnce_list import save_prefab_instance_list
 from terry_savers.terry_tree_list import save_tree_list
 from terry_savers.terry_custom_material_mesh_list import save_custom_material_mesh_list
 from terry_savers.terry_light_probe_list import save_light_probe_list
-from terry_savers.terry_poin_light_list import save_point_light_list
+from terry_savers.terry_point_light_list import save_point_light_list
 from terry_savers.terry_playable_area import save_playable_area
 from terry_savers.terry_spot_light_list import save_spot_light_list
+from terry_savers.terry_sounds_shape_list import save_sound_shape_list
 
 class StructureType(Enum):
     PREFAB = 1
@@ -77,6 +78,7 @@ def map_saver(filename, map_data_tuple: tuple):
     #    convert_custom_material_mesh(i)
     save_custom_material_mesh_list(list(map(convert_custom_material_mesh, map_data.custom_material_meshes)), entities)
     # convert_terrain_stencil_triangle(map_data.terrain_stencil_triangle)
+    save_sound_shape_list(list(map(convert_sound_shape, map_data.sound_shapes)), entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 
