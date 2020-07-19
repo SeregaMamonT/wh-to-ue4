@@ -251,6 +251,15 @@ class Deployment:
     deployment_areas: List[DeploymentArea]
 
 
+class CompositeScene:
+    scene_file: str
+    height_mode: str
+    pdlc_mask: int
+    flags: Dict[str, bool]
+    coordinates: Matrix
+    transform: List[float]
+
+
 class BMDData:
     buildings: List[Building]
     capture_locations: List[CaptureLocation]
@@ -282,3 +291,4 @@ class MapData(BMDData):
     spot_lights: List[SpotLight]
     sound_shapes: List[SoundShape]
     deployment: List[Deployment]
+    composite_scenes: List[CompositeScene]

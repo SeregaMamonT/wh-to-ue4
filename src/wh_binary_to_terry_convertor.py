@@ -1,11 +1,13 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
-    TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape
+    TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
+    TerryCompositeSecne
 
 from typing import BinaryIO, List
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
-    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D
+    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
+    CompositeScene
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -277,12 +279,13 @@ def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
     # colours
     max_color = max(spot_light.colour.red, spot_light.colour.green, spot_light.colour.blue)
     terry_spot_light.intensity = max_color
-    terry_spot_light.colour = ColourRGBA(int(spot_light.colour.red/max_color * 255), int(spot_light.colour.green/max_color * 255),
-                                         int(spot_light.colour.blue/max_color * 255), 255)
+    terry_spot_light.colour = ColourRGBA(int(spot_light.colour.red / max_color * 255),
+                                         int(spot_light.colour.green / max_color * 255),
+                                         int(spot_light.colour.blue / max_color * 255), 255)
     terry_spot_light.length = spot_light.length
     veird_constant = 57.2957549
-    terry_spot_light.inner_angle = spot_light.inner_angle*veird_constant
-    terry_spot_light.outer_angle = spot_light.outer_angle*veird_constant
+    terry_spot_light.inner_angle = spot_light.inner_angle * veird_constant
+    terry_spot_light.outer_angle = spot_light.outer_angle * veird_constant
     terry_spot_light.falloff = spot_light.falloff
     terry_spot_light.volumetric = spot_light.flags["volumetric"]
     terry_spot_light.gobo = spot_light.gobo
@@ -324,9 +327,29 @@ def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
     return terry_sound_shape
 
 
+def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSecne:
+    terry_composite_scene = TerryCompositeSecne()
+    terry_composite_scene.ectransform = ECTransform()
+    terry_composite_scene.path = composite_scene.scene_file
+    terry_composite_scene.ectransform.position = []
+    for i in range(3):
+        terry_composite_scene.ectransform.position.append(composite_scene.transform[i])
+
+    coordinates = composite_scene.coordinates
+    terry_composite_scene.ectransform.scale = list(map(mod_vector, coordinates))
+    for i in range(3):
+        scale = terry_composite_scene.ectransform.scale[i]
+        for j in range(3):
+            coordinates[i][j] /= scale
+    terry_composite_scene.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_composite_scene.autoplay = composite_scene.flags["autoplay"]
+    
+    return terry_composite_scene
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:
+
+    # NEED WORK!!!!!
     terry_terrain_hole = TerryTerrainHole()
     terry_terrain_hole.ectransform = ECTransform()
     temp_triangles = triangles

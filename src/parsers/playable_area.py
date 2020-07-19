@@ -12,7 +12,7 @@ def read_playable_area_v2(file):
     playable_area.min_y = float4(file)
     playable_area.max_x = float4(file)
     playable_area.max_y = float4(file)
-
+    playable_area.flags = {}
     # dont know exact flags
     file.read(5)
 

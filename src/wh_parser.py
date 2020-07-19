@@ -156,7 +156,7 @@ def read_map(file: BinaryIO, global_context):
         read_terrain_stencil_blend_triangle_list(file)
         map.spot_lights = read_spot_light_list(file)
         map.sound_shapes = read_sound_shape_list(file)
-        read_composite_scene_list(file)
+        map.composite_scenes = read_composite_scene_list(file)
         map.deployment = read_deployment_list(file)
         read_bmd_catchment_area_list(file)
         # print('Hooray it did not crash!')

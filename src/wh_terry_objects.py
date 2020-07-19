@@ -4,6 +4,7 @@ from app_typing import Matrix, Vector
 
 from wh_binary_objects import Point2D, Point3D, ColourRGBA
 
+
 class ECTransform:
     position: List[float]
     rotation: List[float]
@@ -96,6 +97,7 @@ class TerryLightProbe:
     is_primary: bool
     ectransform: ECTransform
 
+
 class TerryPlayableArea:
     width: float
     height: float
@@ -134,4 +136,10 @@ class TerrySoundShape:
     radius: float
     points: List[Point2D]
     points_cloud: List[Point3D]
+    ectransform: ECTransform
+
+
+class TerryCompositeSecne:
+    path: str
+    autoplay: bool
     ectransform: ECTransform
