@@ -26,6 +26,15 @@ class ColourRGB:
         self.blue = b
 
 
+class ColourRGBA:
+
+    def __init__(self, r: float, g: float, b: float, a: float):
+        self.red = r
+        self.green = g
+        self.blue = b
+        self.alpha = a
+
+
 class Cube:
 
     def __init__(self, min_x: float, min_y: float, min_z: float, max_x: float, max_y: float, max_z: float):

@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from app_typing import Matrix, Vector
 
-from wh_binary_objects import Point2D
+from wh_binary_objects import Point2D, Point3D, ColourRGBA
 
 class ECTransform:
     position: List[float]
@@ -89,3 +89,22 @@ class TerryTerrainHole:
     procedural_exclusion_zone_margin: int
     ectransform: ECTransform
     polyline: List[Point2D]
+
+
+class TerryLightProbe:
+    radius: int
+    is_primary: bool
+    ectransform: ECTransform
+
+
+class TerryPointLight:
+    colour: ColourRGBA
+    colour_scale: int
+    radius: int
+    animation_type: str
+    animation_speed_scale: tuple
+    colour_min: int
+    random_offset: int
+    falloff_type: str
+    for_light_probes_only: bool
+    ectransform: ECTransform

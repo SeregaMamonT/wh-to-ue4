@@ -1,9 +1,11 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
-    TerryTerrainHole
+    TerryTerrainHole, TerryLightProbe, TerryPointLight
+
 from typing import BinaryIO, List
+
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
-    TerrainStencilTriangle
+    TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
@@ -207,6 +209,47 @@ def convert_custom_material_mesh(custom_material_mesh: CustomMaterialMesh) -> Te
     return terry_custom_material_mesh
 
 
+def convert_light_probe(light_probe: LightProbe) -> TerryLightProbe:
+    terry_light_probe = TerryLightProbe()
+    terry_light_probe.ectransform = ECTransform()
+    terry_light_probe.radius = int(light_probe.radius)
+    terry_light_probe.is_primary = light_probe.is_primary
+    terry_light_probe.ectransform.position = light_probe.position
+    terry_light_probe.ectransform.rotation = [0, 0, 0]
+    terry_light_probe.ectransform.scale = [1, 1, 1]
+
+    return terry_light_probe
+
+
+animation_type = {
+    0: "LAT_NONE",
+    1: "LAT_RADIUS_SIN",
+    2: "LAT_RADIUS_SIN_SIN",
+}
+
+
+def convert_point_light(point_light: PointLight) -> TerryPointLight:
+    terry_point_light = TerryPointLight()
+    terry_point_light.ectransform = ECTransform()
+    terry_point_light.radius = int(point_light.radius)
+    terry_point_light.colour_scale = int(point_light.colour_scale)
+    terry_point_light.animation_type = animation_type[point_light.animation_type]
+    terry_point_light.colour_min = int(point_light.colour_min)
+    terry_point_light.random_offset = int(point_light.random_offset)
+    terry_point_light.ectransform.position = point_light.position
+    terry_point_light.falloff_type = point_light.falloff_type
+    terry_point_light.for_light_probes_only = point_light.flags["light_probes_only"]
+    terry_point_light.ectransform.position = point_light.position
+    terry_point_light.animation_speed_scale = (int(point_light.params[0]), int(point_light.params[1]))
+    terry_point_light.ectransform.rotation = [0, 0, 0]
+    terry_point_light.ectransform.scale = [1, 1, 1]
+    terry_point_light.colour = ColourRGBA(int(point_light.colour.red * 255), int(point_light.colour.green * 255),
+                                          int(point_light.colour.blue * 255), 255)
+
+
+    return terry_point_light
+
+
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:
     terry_terrain_hole = TerryTerrainHole()
     terry_terrain_hole.ectransform = ECTransform()
@@ -215,7 +258,7 @@ def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) ->
         temp_triangles.remove(trianlge)
         temp2_triangles = [trianlge]
         i = triangles[0]
-        #for i in temp_triangles:
+        # for i in temp_triangles:
         if (trianlge.position1 == i.position1) or (trianlge.position2 == i.position2) or (
                 trianlge.position3 == i.position3):
             temp2_triangles.append(i)

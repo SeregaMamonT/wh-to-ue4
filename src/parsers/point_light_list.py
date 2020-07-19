@@ -3,7 +3,7 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
     read_translation, get_scale, unscale
 
-from wh_binary_objects import PointLight
+from wh_binary_objects import PointLight, ColourRGB
 
 
 def read_point_light_v4(file):
@@ -52,7 +52,7 @@ def read_point_light_v6(file):
     point_light = PointLight()
     point_light.position = (float4(file), float4(file), float4(file))
     point_light.radius = float4(file)
-    point_light.colour = (float4(file), float4(file), float4(file))
+    point_light.colour = ColourRGB(float4(file), float4(file), float4(file))
     point_light.colour_scale = float4(file)
     point_light.animation_type = int1(file)
     point_light.params = (float4(file), float4(file))
