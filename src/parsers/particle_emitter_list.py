@@ -1,7 +1,6 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
-    read_translation, get_scale, unscale, read_flags
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3, read_flags
 
 from wh_binary_objects import Particle
 
@@ -9,8 +8,7 @@ from wh_binary_objects import Particle
 def read_particle_instance_v5(file):
     particle = Particle()
     particle.model_name = string(file)
-    particle.coordinates = read_coordinates(file)
-    particle.position = read_translation(file)
+    particle.transform = read_transform_4_x_3(file)
     file.read(6)  # to be translated
     particle.flags = read_flags(file)
     particle.object_relation = string(file)
@@ -25,8 +23,9 @@ def read_particle_instance_v5(file):
 def read_particle_instance_v6(file):
     particle = Particle()
     particle.model_name = string(file)
-    particle.coordinates = read_coordinates(file)
-    particle.position = read_translation(file)
+    particle.transform = [[None] * 3 for i in range(4)]
+    for i in range(12):
+        particle.transform[i // 3][i % 3] = float4(file)
     file.read(6)  # to be translated
     particle.flags = read_flags(file)
     particle.object_relation = string(file)

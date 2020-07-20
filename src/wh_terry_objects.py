@@ -2,13 +2,17 @@ from typing import Dict, List
 
 from app_typing import Matrix, Vector
 
-from wh_binary_objects import Point2D, Point3D, ColourRGBA
+from wh_common_objects import Point2D, Point3D, ColourRGBA, ColourRGB, Cube, Scale3D, Rotation3D
+
+
 
 
 class ECTransform:
-    position: List[float]
-    rotation: List[float]
-    scale: List[float]
+
+    def __init__(self, position: Point3D, rotation: Rotation3D, scale: Scale3D):
+        self.position = position
+        self.rotation = rotation
+        self.scale = scale
 
 
 class ECMeshRenderSettings:

@@ -46,6 +46,14 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
+
+def read_transform_4_x_3(file: BinaryIO):
+    transform = [[None] * 3 for i in range(4)]
+    for i in range(12):
+        transform[i // 3][i % 3] = float4(file)
+
+    return transform
+
 def read_coordinates(file: BinaryIO):
     coordinates = [[None] * 3 for i in range(3)]
     for i in range(9):

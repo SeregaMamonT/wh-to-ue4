@@ -2,55 +2,7 @@ from typing import Dict, List
 
 from app_typing import Matrix, Vector
 
-
-class Point3D:
-
-    def __init__(self, x: float, y: float, z: float):
-        self.x = x
-        self.y = y
-        self.z = z
-
-
-class Point2D:
-
-    def __init__(self, x: float, y: float):
-        self.x = x
-        self.y = y
-
-
-class ColourRGB:
-
-    def __init__(self, r: float, g: float, b: float):
-        self.red = r
-        self.green = g
-        self.blue = b
-
-
-class ColourRGBA:
-
-    def __init__(self, r: float, g: float, b: float, a: float):
-        self.red = r
-        self.green = g
-        self.blue = b
-        self.alpha = a
-
-
-class Cube:
-
-    def __init__(self, min_x: float, min_y: float, min_z: float, max_x: float, max_y: float, max_z: float):
-        self.min_x = min_x
-        self.min_y = min_y
-        self.min_z = min_z
-        self.max_x = max_x
-        self.max_y = max_y
-        self.max_z = max_z
-
-
-class Flag:
-
-    def __init__(self, name: str, value: bool):
-        self.name = name
-        self.value = value
+from wh_common_objects import Point2D, Point3D, ColourRGBA, ColourRGB, Cube, Scale3D, Rotation3D
 
 
 class BuildingProperty:
@@ -65,18 +17,15 @@ class Building:
     building_id: str
     parent_id: int
     height_mode: str
-    coordinates: Matrix
-    transform: List[float]
+    transform: Matrix
     properties: BuildingProperty
-
 
 
 
 class Particle:
     model_name: str
     object_relation: str
-    position: Vector
-    coordinates: Matrix
+    transform: Matrix
     flags: Dict[str, bool]
     autoplay: bool
     visible_in_shroud: bool

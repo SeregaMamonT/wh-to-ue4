@@ -1,9 +1,8 @@
 from typing import BinaryIO, List, Any, Callable
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
-    read_translation, get_scale, unscale
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3
 
-from wh_binary_objects import Building, BuildingProperty, Flag
+from wh_binary_objects import Building, BuildingProperty
 
 from version_holder import VersionHolder
 
@@ -25,13 +24,7 @@ def read_building_v8(file):
     building.parent_id = int2(file)
     building.building_key = string(file)
     building.position_type = string(file)
-
-    building.coordinates = [[None] * 3 for i in range(3)]
-    for i in range(9):
-        building.coordinates[i // 3][i % 3] = float4(file)
-    building.transform = [None] * 3
-    for i in range(3):
-        building.transform[i] = float4(file)
+    building.transform = read_transform_4_x_3(file)
 
     property_version = int2(file)
     building.properties = building_property_versions.get_reader(property_version)(file)

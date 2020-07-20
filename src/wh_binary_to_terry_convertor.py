@@ -1,9 +1,11 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
     TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
-    TerryCompositeSecne
+    TerryCompositeSecne, Scale3D, Rotation3D
 
 from typing import BinaryIO, List
+from app_typing import Matrix, Vector
+from math import degrees
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
@@ -17,27 +19,32 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
+def unscale(transform: Matrix, scale: Vector):
+    unscaled_transform = transform
+    for i in range(3):
+        for j in range(3):
+            unscaled_transform[i][j] /= scale[i]
+
+    return unscaled_transform
+
+
+def get_transforms(transform: Matrix):
+    position = Point3D(*transform[3])
+    scale = Scale3D(*map(mod_vector, transform[0:3]))
+    rotation_matrix = unscale(transform[0:3], scale.as_vector())
+    rotation = Rotation3D(*map(degrees, get_angles_XYZ(transpose(rotation_matrix))))
+
+    return position, rotation, scale
+
+
 def convert_building(building: Building) -> TerryBuilding:
     terry_building = TerryBuilding()
-    terry_building.ectransform = ECTransform()
     terry_building.ecmeshrendersettings = ECMeshRenderSettings(building.properties.flags["cast_shadows"])
     terry_building.ecterrainclamp = ECTerrainClamp()
     terry_building.flags = {}
     terry_building.key = building.building_key
-
     terry_building.damage = int(building.properties.starting_damage_unary * 100)
-    terry_building.ectransform.position = []
-
-    for i in range(3):
-        terry_building.ectransform.position.append(building.transform[i])
-
-    coordinates = building.coordinates
-    terry_building.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_building.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    terry_building.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_building.ectransform = ECTransform(*get_transforms(building.transform))
     terry_building.flags["indestructible"] = building.properties.flags["indestructible"]
     terry_building.flags["toggleable"] = building.properties.flags["toggleable"]
     terry_building.flags["export_as_prop"] = False
@@ -48,23 +55,10 @@ def convert_building(building: Building) -> TerryBuilding:
 
 def convert_particle(particle: Particle) -> TerryParticle:
     terry_particle = TerryParticle()
-    terry_particle.ectransform = ECTransform()
     terry_particle.ecterrainclamp = ECTerrainClamp()
     terry_particle.ecbattleproperties = ECBattleProperties()
     terry_particle.vfx = particle.model_name
-
-    terry_particle.ectransform.position = []
-
-    for i in range(3):
-        terry_particle.ectransform.position.append(particle.position[i])
-
-    coordinates = particle.coordinates
-    terry_particle.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_particle.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    terry_particle.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_particle.ectransform = ECTransform(*get_transforms(particle.transform))
 
     return terry_particle
 
@@ -342,12 +336,11 @@ def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSe
             coordinates[i][j] /= scale
     terry_composite_scene.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
     terry_composite_scene.autoplay = composite_scene.flags["autoplay"]
-    
+
     return terry_composite_scene
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:
-
     # NEED WORK!!!!!
     terry_terrain_hole = TerryTerrainHole()
     terry_terrain_hole.ectransform = ECTransform()

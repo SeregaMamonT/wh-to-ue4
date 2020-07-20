@@ -17,10 +17,14 @@ def create_entity_node(entities: Element):
 
 
 def ectransform_to_xml(entity: Element, ectransform: ECTransform):
+    position = ectransform.position
+    rotation = ectransform.rotation
+    scale = ectransform.scale
     ECTransform = SubElement(entity, "ECTransform", {
-        "position": " ".join(map(s_float, ectransform.position)),
-        "rotation": " ".join(map(s_float, ectransform.rotation)),
-        "scale": " ".join(map(s_float, ectransform.scale)),
+        "position": "{0} {1} {2}".format(s_float(position.x), s_float(position.y), s_float(position.z)),
+        "rotation": "{0} {1} {2}".format(s_float(rotation.rotation_x), s_float(rotation.rotation_y),
+                                         s_float(rotation.rotation_z)),
+        "scale": "{0} {1} {2}".format(s_float(scale.scale_x), s_float(scale.scale_y), s_float(scale.scale_z)),
     })
 
 
