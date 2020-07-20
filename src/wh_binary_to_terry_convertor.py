@@ -283,9 +283,9 @@ def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
                                          int(spot_light.colour.green / max_color * 255),
                                          int(spot_light.colour.blue / max_color * 255), 255)
     terry_spot_light.length = spot_light.length
-    veird_constant = 57.2957549
-    terry_spot_light.inner_angle = spot_light.inner_angle * veird_constant
-    terry_spot_light.outer_angle = spot_light.outer_angle * veird_constant
+    weird_constant = 57.2957549
+    terry_spot_light.inner_angle = spot_light.inner_angle * weird_constant
+    terry_spot_light.outer_angle = spot_light.outer_angle * weird_constant
     terry_spot_light.falloff = spot_light.falloff
     terry_spot_light.volumetric = spot_light.flags["volumetric"]
     terry_spot_light.gobo = spot_light.gobo

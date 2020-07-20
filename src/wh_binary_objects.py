@@ -215,6 +215,11 @@ class CustomMaterialMesh:
     height_mode = str
 
 
+class RiverNode:
+    width: float
+    flow_speed: float
+    vertex: Point3D
+
 class SoundShape:
     key: str
     type: str
@@ -223,7 +228,7 @@ class SoundShape:
     outer_radius: float
     inner_cube: Cube
     outer_cube: Cube
-    river_nodes: []
+    river_nodes: List[RiverNode]
     clamp_to_surface: bool
     height_mode: str
     campaign_type_mask: int
