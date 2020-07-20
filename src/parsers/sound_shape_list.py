@@ -5,15 +5,21 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import SoundShape, Point3D, Cube, RiverNode
 
+from version_reader import VersionHolder
 
-def read_river_node(file):
-    river_node_version = int2(file)
+
+def read_river_node_v1(file):
     river_node = RiverNode()
     river_node.vertex = Point3D(float4(file), float4(file), float4(file))
     river_node.width = float4(file)
     river_node.flow_speed = float4(file)
 
     return river_node
+
+
+river_node_versions = VersionHolder('River node', {
+    1: read_river_node_v1,
+})
 
 
 def read_sound_shape(file):
@@ -32,7 +38,8 @@ def read_sound_shape(file):
     river_nodes_amount = int4(file)
     sound_shape.river_nodes_list = []
     for i in range(river_nodes_amount):
-        sound_shape.river_nodes_list.append(read_river_node(file))
+        river_node_version = int2(file)
+        sound_shape.river_nodes_list.append(river_node_versions.get_reader(river_node_version)(file))
     sound_shape.clamp_to_surface = bool1(file)
     sound_shape.height_mode = string(file)
     sound_shape.campaign_type_mask = int4(file)
@@ -54,26 +61,18 @@ def read_sound_shape_v7(file):
     return sound_shape
 
 
-version_readers = {
+sound_shape_versions = VersionHolder('Sound shape', {
     6: read_sound_shape_v6,
     7: read_sound_shape_v7,
-}
-
-
-def get_version_reader(version):
-    if version in version_readers:
-        return version_readers[version]
-    else:
-        raise Exception('Unsupported sound shape version: ' + str(version))
+})
 
 
 def read_sound_shape_list(file: BinaryIO):
     version = int2(file)  # version
     amount = int4(file)
     sound_shapes = []
-    # print('Sound shapes: ', version, sound_shapes)
     for i in range(amount):
         sound_shape_version = int2(file)
-        sound_shapes.append(get_version_reader(sound_shape_version)(file))
+        sound_shapes.append(sound_shape_versions.get_reader(sound_shape_version)(file))
 
     return sound_shapes
