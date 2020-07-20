@@ -54,19 +54,6 @@ def read_transform_4_x_3(file: BinaryIO):
 
     return transform
 
-def read_coordinates(file: BinaryIO):
-    coordinates = [[None] * 3 for i in range(3)]
-    for i in range(9):
-        coordinates[i // 3][i % 3] = float4(file)
-    return coordinates
-
-
-def read_translation(file: BinaryIO):
-    translation = [None] * 3
-    for i in range(3):
-        translation[i] = float4(file)
-    return translation
-
 
 def get_scale(coordinates):
     return list(map(mod_vector, coordinates))

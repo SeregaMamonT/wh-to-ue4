@@ -1,9 +1,10 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
-    read_translation, get_scale, unscale, read_flags, read_transform_4_x_3
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_flags, \
+    read_transform_4_x_3
 
 from wh_binary_objects import Prop
+
 
 def read_prop_list(file: BinaryIO):
     assert_version('PROP_LIST', 2, int2(file))
@@ -44,7 +45,7 @@ def read_prop_prop_instance(file: BinaryIO):
     decal_override_gbuffer_normal = bool1(file)
 
     prop.flags = read_flags(file)
-    prop.flags["decal_override_gbuffer_normal"] =  decal_override_gbuffer_normal
+    prop.flags["decal_override_gbuffer_normal"] = decal_override_gbuffer_normal
 
     prop.flags["visible_in_shroud"] = bool1(file)
     prop.flags["decal_apply_to_terrain"] = bool1(file)
