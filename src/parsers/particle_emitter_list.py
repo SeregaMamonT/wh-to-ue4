@@ -1,6 +1,6 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_n_x_m
 
 from wh_binary_objects import Particle
 
@@ -38,7 +38,7 @@ def read_particle_instance_v6(file):
 def read_particle_instnace_common(file):
     particle = Particle()
     particle.model_name = string(file)
-    particle.transform = read_transform_4_x_3(file)
+    particle.transform = read_transform_n_x_m(file, 4, 3)
     # not 100 sure about order if particle crash it would be probably here
     particle.emission_rate = float4(file)
     particle.instance_name = string(file)

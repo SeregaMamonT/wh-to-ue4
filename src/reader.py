@@ -46,23 +46,17 @@ def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
 
 
-
-def read_transform_4_x_3(file: BinaryIO):
-    transform = [[None] * 3 for i in range(4)]
-    for i in range(12):
-        transform[i // 3][i % 3] = float4(file)
+def read_transform_n_x_m(file: BinaryIO, rows: int, cols: int):
+    transform = [[None] * cols for i in range(rows)]
+    for i in range(rows):
+        for j in range(cols):
+            transform[i][j] = float4(file)
 
     return transform
 
 
 def get_scale(coordinates):
     return list(map(mod_vector, coordinates))
-
-
-def unscale(coordinates, scales):
-    for i in range(3):
-        for j in range(3):
-            coordinates[i][j] /= scales[i]
 
 
 def read_flags(file: BinaryIO):

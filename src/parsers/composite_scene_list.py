@@ -1,6 +1,6 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_n_x_m
 
 from wh_binary_objects import CompositeScene
 
@@ -41,7 +41,7 @@ def read_composite_scene_v7(file):
 
 def read_composite_scene_common(file):
     composite_scene = CompositeScene()
-    composite_scene.transform = read_transform_4_x_3(file)
+    composite_scene.transform = read_transform_n_x_m(file, 4, 3)
     composite_scene.scene_file = string(file)
     composite_scene.height_mode = string(file)
 

@@ -1,6 +1,7 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, get_scale, unscale
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, get_scale, \
+    read_transform_n_x_m
 
 from wh_binary_objects import PrefabInstance, Point2D
 
@@ -9,11 +10,7 @@ def read_prefab_instance(file):
     prefab_instance = PrefabInstance()
     prefab_version = int2(file)
     prefab_instance.name = string(file)
-    prefab_instance.transformation = []
-    for i in range(4):
-        row = [float4(file), float4(file), float4(file), float4(file)]
-        prefab_instance.transformation.append(row)
-
+    prefab_instance.transformation = read_transform_n_x_m(file, 4, 4)
     # print(prefab_instance.transform)
     property_overrides = int4(file)
     # print('Property overrides: ', property_overrides)
@@ -24,7 +21,6 @@ def read_prefab_instance(file):
         file.read(14)
     file.read(7)
     prefab_instance.height_mode = string(file)
-
 
     return prefab_instance
 
