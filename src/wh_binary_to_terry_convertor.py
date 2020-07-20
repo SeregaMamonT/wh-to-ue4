@@ -20,12 +20,12 @@ def mod_vector(vector: List):
 def convert_building(building: Building) -> TerryBuilding:
     terry_building = TerryBuilding()
     terry_building.ectransform = ECTransform()
-    terry_building.ecmeshrendersettings = ECMeshRenderSettings()
+    terry_building.ecmeshrendersettings = ECMeshRenderSettings(building.properties.flags["cast_shadows"])
     terry_building.ecterrainclamp = ECTerrainClamp()
     terry_building.flags = {}
     terry_building.key = building.building_key
 
-    terry_building.damage = int(building.starting_damage_unary * 100)
+    terry_building.damage = int(building.properties.starting_damage_unary * 100)
     terry_building.ectransform.position = []
 
     for i in range(3):
@@ -38,9 +38,8 @@ def convert_building(building: Building) -> TerryBuilding:
         for j in range(3):
             coordinates[i][j] /= scale
     terry_building.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
-    terry_building.ecmeshrendersettings.cast_shadow = building.flags["cast_shadows"]
-    terry_building.flags["indestructible"] = building.flags["indestructible"]
-    terry_building.flags["toggleable"] = building.flags["toggleable"]
+    terry_building.flags["indestructible"] = building.properties.flags["indestructible"]
+    terry_building.flags["toggleable"] = building.properties.flags["toggleable"]
     terry_building.flags["export_as_prop"] = False
     terry_building.flags["allow_in_outfield_as_prop"] = False
 

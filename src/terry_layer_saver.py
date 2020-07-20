@@ -62,7 +62,7 @@ def map_saver(filename, map_data_tuple: tuple):
     map_data = map_data_tuple[0]
     vegetation = map_data_tuple[1]
     entities = Element("entities")
-    # save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
+    save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
     # for key, props in map_data.props.items():
     #     decals = filter(lambda prop: prop.decal, props)
     #     not_decals = filter(lambda prop: not prop.decal, props)

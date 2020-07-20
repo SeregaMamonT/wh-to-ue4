@@ -46,14 +46,30 @@ class Cube:
         self.max_z = max_z
 
 
+class Flag:
+
+    def __init__(self, name: str, value: bool):
+        self.name = name
+        self.value = value
+
+
+class BuildingProperty:
+    starting_damage_unary: float
+    building_id: str
+    flags: Dict[str, bool]
+
+
 class Building:
     building_key: str
     position_type: str
+    building_id: str
+    parent_id: int
     height_mode: str
-    starting_damage_unary: float
-    flags: Dict[str, bool]
     coordinates: Matrix
     transform: List[float]
+    properties: BuildingProperty
+
+
 
 
 class Particle:

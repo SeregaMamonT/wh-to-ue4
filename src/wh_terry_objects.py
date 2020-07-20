@@ -12,7 +12,8 @@ class ECTransform:
 
 
 class ECMeshRenderSettings:
-    cast_shadow: bool
+    def __init__(self, cast_shadow: bool):
+        self.cast_shadow = cast_shadow
 
 
 class ECTerrainClamp:
