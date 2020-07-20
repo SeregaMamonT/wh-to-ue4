@@ -1,7 +1,7 @@
 from math import cos, sin, radians, pi, asin, degrees, atan2
 
 
-def get_matrix(th, phi, psi):
+def get_matrix(psi, th, phi):
     sin_th = sin(th)
     cos_th = cos(th)
     sin_phi = sin(phi)
@@ -50,7 +50,7 @@ def get_angles(R):
             th = pi / 2
             psi = phi + atan2(R[0][1], R[0][2])
         else:
-            th = -pi/2
+            th = -pi / 2
             psi = -phi + atan2(-R[0][1], -R[0][2])
         return psi, th, phi
 
@@ -104,11 +104,6 @@ def get_angles_XZY(R):
 
 
 if __name__ == "__main__":
-    a = get_matrix(radians(45), radians(45), radians(45))
-    print(*map(degrees, get_angles(a)))
-
-    # a = get_matrix(radians(0), radians(-90), radians(-180))
-    # for row in a:
-    #     print(*row)
-    #
-    # print(*map(degrees, get_angles(a)))
+    a = get_matrix(radians(0), radians(95.0), radians(0))
+    angles = get_angles(a)
+    print(*map(degrees, angles))

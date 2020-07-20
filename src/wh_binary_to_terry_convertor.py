@@ -20,12 +20,16 @@ def mod_vector(vector: List):
 
 
 def unscale(transform: Matrix, scale: Vector):
-    unscaled_transform = transform
+    unscaled_transform = copy_matrix(transform)
     for i in range(3):
         for j in range(3):
             unscaled_transform[i][j] /= scale[i]
 
     return unscaled_transform
+
+
+def copy_matrix(matrix: Matrix) -> Matrix:
+    return list(map(lambda row: row.copy(), matrix))
 
 
 def get_transforms(transform: Matrix):
@@ -100,35 +104,18 @@ def convert_prop_building(prop: Prop) -> TerryPropBuilding:
 
 def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
     terry_prefab_instance = TerryPrefabInstance()
-    terry_prefab_instance.ectransform = ECTransform()
+
     terry_prefab_instance.ecterrainclamp = ECTerrainClamp()
-    temp_string = prefab.name.replace('prefabs/', '')
-    temp_string = temp_string.replace(".bmd", '')
-    terry_prefab_instance.key = temp_string
-    terry_prefab_instance.ectransform.position = []
+    terry_prefab_instance.key = prefab.name.replace('prefabs/', '').replace(".bmd", '')
 
     # transform
-    translation = []
-    for i in range(3):
-        translation.append(prefab.transformation[3][i])
+    position = Point3D(*prefab.transformation[3][:3])
+    coordinates = prefab.transformation[:3]
+    scale = Scale3D(*map(mod_vector, coordinates))
+    coordinates = unscale(coordinates, scale.as_vector())
+    rotation = Rotation3D(*map(lambda angle: -degrees(angle), get_angles_XYZ(coordinates)))
 
-    temp_coordinates = [[None] * 3 for i in range(3)]
-    for i in range(9):
-        temp_coordinates[i // 3][i % 3] = prefab.transformation[i // 3][i % 3]
-
-    for i in range(3):
-        terry_prefab_instance.ectransform.position.append(translation[i])
-
-    coordinates = temp_coordinates
-    terry_prefab_instance.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_prefab_instance.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    temp_angles = degrees_tuple(get_angles_XYZ(coordinates))
-    terry_prefab_instance.ectransform.rotation = []
-    for i in temp_angles:
-        terry_prefab_instance.ectransform.rotation.append(-i)
+    terry_prefab_instance.ectransform = ECTransform(position, rotation, scale)
 
     return terry_prefab_instance
 
