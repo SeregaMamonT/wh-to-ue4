@@ -5,7 +5,7 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import SoundShape, Point3D, Cube, RiverNode
 
-from version_reader import VersionHolder
+from version_holder import VersionHolder
 
 
 def read_river_node_v1(file):
@@ -22,7 +22,7 @@ river_node_versions = VersionHolder('River node', {
 })
 
 
-def read_sound_shape(file):
+def read_sound_shape_common(file):
     sound_shape = SoundShape()
     sound_shape.key = string(file)
     sound_shape.type = string(file)
@@ -48,14 +48,14 @@ def read_sound_shape(file):
 
 
 def read_sound_shape_v6(file):
-    sound_shape = read_sound_shape(file)
+    sound_shape = read_sound_shape_common(file)
     sound_shape.pdlc_mask = int4(file)
 
     return sound_shape
 
 
 def read_sound_shape_v7(file):
-    sound_shape = read_sound_shape(file)
+    sound_shape = read_sound_shape_common(file)
     sound_shape.pdlc_mask = int8(file)
 
     return sound_shape
@@ -67,12 +67,11 @@ sound_shape_versions = VersionHolder('Sound shape', {
 })
 
 
+def read_sound_shape(file):
+    sound_shape_version = int2(file)
+    return sound_shape_versions.get_reader(sound_shape_version)(file)
+
+
 def read_sound_shape_list(file: BinaryIO):
     version = int2(file)  # version
-    amount = int4(file)
-    sound_shapes = []
-    for i in range(amount):
-        sound_shape_version = int2(file)
-        sound_shapes.append(sound_shape_versions.get_reader(sound_shape_version)(file))
-
-    return sound_shapes
+    return read_list(file, read_sound_shape)
