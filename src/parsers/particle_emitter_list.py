@@ -1,7 +1,6 @@
 from typing import BinaryIO
 
-from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3, \
-    read_flags
+from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_transform_4_x_3
 
 from wh_binary_objects import Particle
 
