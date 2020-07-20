@@ -26,8 +26,11 @@ class Particle:
     model_name: str
     object_relation: str
     transform: Matrix
+    emission_rate: float
+    instance_name: str
     flags: Dict[str, bool]
     autoplay: bool
+    pdlc_mask: int
     visible_in_shroud: bool
 
 

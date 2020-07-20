@@ -6,7 +6,6 @@ from wh_binary_objects import Building, BuildingProperty
 
 from version_holder import VersionHolder
 
-
 def read_building_list(file: BinaryIO):
     assert_version('BATTLEFIELD_BUILDING_LIST', 1, int2(file))
     return read_list(file, read_building)
