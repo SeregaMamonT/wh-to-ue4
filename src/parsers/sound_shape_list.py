@@ -7,18 +7,28 @@ from wh_binary_objects import SoundShape, Point3D, Cube, RiverNode
 from version_holder import VersionHolder
 
 
-def read_river_node_v1(file):
-    river_node = RiverNode()
-    river_node.vertex = Point3D(float4(file), float4(file), float4(file))
-    river_node.width = float4(file)
-    river_node.flow_speed = float4(file)
-
-    return river_node
+def read_sound_shape_list(file: BinaryIO):
+    version = int2(file)  # version
+    return read_list(file, read_sound_shape)
 
 
-river_node_versions = VersionHolder('River node', {
-    1: read_river_node_v1,
-})
+def read_sound_shape(file):
+    sound_shape_version = int2(file)
+    return sound_shape_versions.get_reader(sound_shape_version)(file)
+
+
+def read_sound_shape_v6(file):
+    sound_shape = read_sound_shape_common(file)
+    sound_shape.pdlc_mask = int4(file)
+
+    return sound_shape
+
+
+def read_sound_shape_v7(file):
+    sound_shape = read_sound_shape_common(file)
+    sound_shape.pdlc_mask = int8(file)
+
+    return sound_shape
 
 
 def read_sound_shape_common(file):
@@ -46,31 +56,21 @@ def read_sound_shape_common(file):
     return sound_shape
 
 
-def read_sound_shape_v6(file):
-    sound_shape = read_sound_shape_common(file)
-    sound_shape.pdlc_mask = int4(file)
-
-    return sound_shape
-
-
-def read_sound_shape_v7(file):
-    sound_shape = read_sound_shape_common(file)
-    sound_shape.pdlc_mask = int8(file)
-
-    return sound_shape
-
-
 sound_shape_versions = VersionHolder('Sound shape', {
     6: read_sound_shape_v6,
     7: read_sound_shape_v7,
 })
 
 
-def read_sound_shape(file):
-    sound_shape_version = int2(file)
-    return sound_shape_versions.get_reader(sound_shape_version)(file)
+def read_river_node_v1(file):
+    river_node = RiverNode()
+    river_node.vertex = Point3D(float4(file), float4(file), float4(file))
+    river_node.width = float4(file)
+    river_node.flow_speed = float4(file)
+
+    return river_node
 
 
-def read_sound_shape_list(file: BinaryIO):
-    version = int2(file)  # version
-    return read_list(file, read_sound_shape)
+river_node_versions = VersionHolder('River node', {
+    1: read_river_node_v1,
+})
