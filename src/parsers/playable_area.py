@@ -3,6 +3,13 @@ from typing import BinaryIO
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8
 from wh_binary_objects import PlayableArea
 
+from version_holder import VersionHolder
+
+
+def read_playable_area(file: BinaryIO):
+    version = int2(file)  # version
+    return playable_area_versions.get_reader(version)(file)
+
 
 def read_playable_area_v2(file):
     playable_area = PlayableArea()
@@ -13,7 +20,6 @@ def read_playable_area_v2(file):
     playable_area.flags = {}
     # dont know exact flags
     file.read(5)
-
 
     return playable_area
 
@@ -34,21 +40,14 @@ def read_playable_area_v3(file):
 
     return playable_area
 
-version_readers = {
+
+playable_area_versions = VersionHolder('Playable area', {
     2: read_playable_area_v2,
     3: read_playable_area_v3,
-}
+})
 
 
-def get_version_reader(version):
-    if version in version_readers:
-        return version_readers[version]
-    else:
-        raise Exception('Unsupported playable area version: ' + str(version))
 
 
-def read_playable_area(file: BinaryIO):
-    version = int2(file)  # version
-    playable_area = get_version_reader(version)(file)
 
-    return playable_area
+

@@ -6,7 +6,20 @@ from wh_binary_objects import LightProbe
 
 from wh_common_objects import Point3D
 
+from version_holder import VersionHolder
+
+
+def read_light_probe_list(file: BinaryIO):
+    assert_version('LIGHT_PROBE_LIST', 1, int2(file))
+    return read_list(file, read_light_probe)
+
+
 def read_light_probe(file):
+    light_probe_version = int2(file)
+    return light_probe_versions.get_reader(light_probe_version)(file)
+
+
+def read_light_probe_v2(file):
     light_probe = LightProbe()
     light_probe.position = Point3D(float4(file), float4(file), float4(file))
     light_probe.radius = float4(file)
@@ -16,12 +29,6 @@ def read_light_probe(file):
     return light_probe
 
 
-def read_light_probe_list(file: BinaryIO):
-    version = int2(file)  # version
-    amount = int4(file)
-    light_probe_list = []
-    for i in range(amount):
-        point_light_version = int2(file)
-        light_probe_list.append(read_light_probe(file))
-
-    return light_probe_list
+light_probe_versions = VersionHolder('Light probe', {
+    2: read_light_probe_v2,
+})
