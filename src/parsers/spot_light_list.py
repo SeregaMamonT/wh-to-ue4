@@ -5,10 +5,12 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import SpotLight, ColourRGB
 
+from wh_common_objects import Point3D
+
 
 def read_spot_light_v5(file):
     spot_light = SpotLight()
-    spot_light.position = (float4(file), float4(file), float4(file))
+    spot_light.position = Point3D(float4(file), float4(file), float4(file))
     spot_light.end = (float4(file), float4(file), float4(file), float4(file))
     spot_light.length = float4(file)
     spot_light.inner_angle = float4(file)
@@ -26,7 +28,7 @@ def read_spot_light_v5(file):
 
 def read_spot_light_v6(file):
     spot_light = SpotLight()
-    spot_light.position = (float4(file), float4(file), float4(file))
+    spot_light.position = Point3D(float4(file), float4(file), float4(file))
     spot_light.end = (float4(file), float4(file), float4(file), float4(file))
     spot_light.length = float4(file)
     spot_light.inner_angle = float4(file)

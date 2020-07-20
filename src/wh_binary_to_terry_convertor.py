@@ -65,7 +65,6 @@ def convert_particle(particle: Particle) -> TerryParticle:
 
 def convert_decal(prop: Prop) -> TerryDecal:
     terry_decal = TerryDecal()
-    terry_decal.ectransform = ECTransform()
     terry_decal.ecterrainclamp = ECTerrainClamp()
     terry_decal.ecbattleproperties = ECBattleProperties()
     if prop.flags["decal_override_gbuffer_normal"] == True:
@@ -79,18 +78,7 @@ def convert_decal(prop: Prop) -> TerryDecal:
     terry_decal.model_path = prop.key
     terry_decal.parallax_scale = prop.decal_parallax_scale
     terry_decal.tiling = int(prop.decal_tiling)
-    terry_decal.ectransform.position = []
-
-    for i in range(3):
-        terry_decal.ectransform.position.append(prop.translation[i])
-
-    coordinates = prop.coordinates
-    terry_decal.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_decal.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    terry_decal.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_decal.ectransform = ECTransform(*get_transforms(prop.transform))
     # print(prop.flags)
     terry_decal.ecterrainclamp.terrain_oriented = True
 
@@ -99,23 +87,11 @@ def convert_decal(prop: Prop) -> TerryDecal:
 
 def convert_prop_building(prop: Prop) -> TerryPropBuilding:
     terry_prop_building = TerryPropBuilding()
-    terry_prop_building.ectransform = ECTransform()
     terry_prop_building.ecterrainclamp = ECTerrainClamp()
     terry_prop_building.ecbattleproperties = ECBattleProperties()
-    terry_prop_building.ecmeshrendersettings = ECMeshRenderSettings()
+    terry_prop_building.ecmeshrendersettings = ECMeshRenderSettings(True)
     terry_prop_building.model_path = prop.key
-    terry_prop_building.ectransform.position = []
-
-    for i in range(3):
-        terry_prop_building.ectransform.position.append(prop.translation[i])
-
-    coordinates = prop.coordinates
-    terry_prop_building.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_prop_building.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    terry_prop_building.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_prop_building.ectransform = ECTransform(*get_transforms(prop.transform))
 
     terry_prop_building.ecmeshrendersettings.cast_shadow = True
 
@@ -159,23 +135,15 @@ def convert_prefab_instance(prefab: PrefabInstance) -> TerryPrefabInstance:
 
 def convert_tree_instance(tree: Tree) -> List[TerryTree]:
     terry_tree_list = []
-    for i in tree.props:
+    for tree_prop in tree.props:
         terry_tree = TerryTree()
         temp_string = tree.key.replace('BattleTerrain/vegetation/', '')
         temp_string = temp_string.replace('.rigid_model_v2', '')
         terry_tree.key = temp_string
         terry_tree.ecterrainclamp = ECTerrainClamp()
-        terry_tree.ectransform = ECTransform()
-        terry_tree.ectransform.position = []
-        terry_tree.ectransform.rotation = []
-        terry_tree.ectransform.scale = []
-        terry_tree.ectransform.position.append(i.position[0])
-        terry_tree.ectransform.position.append(i.position[1])
-        terry_tree.ectransform.position.append(i.position[2])
-        for j in range(3):
-            terry_tree.ectransform.rotation.append(0)
-        for j in range(3):
-            terry_tree.ectransform.scale.append(i.scale)
+        terry_tree.ectransform = ECTransform(tree_prop.position, Rotation3D(0, 0, 0),
+                                             Scale3D(tree_prop.scale, tree_prop.scale, tree_prop.scale))
+
         terry_tree_list.append(terry_tree)
 
     return terry_tree_list
@@ -183,20 +151,15 @@ def convert_tree_instance(tree: Tree) -> List[TerryTree]:
 
 def convert_custom_material_mesh(custom_material_mesh: CustomMaterialMesh) -> TerryCustomMaterialMesh:
     terry_custom_material_mesh = TerryCustomMaterialMesh()
-    terry_custom_material_mesh.ectransform = ECTransform()
     terry_custom_material_mesh.polyline = []
     terry_custom_material_mesh.material = custom_material_mesh.material
     # calculate tranform from first vertex
-    position_x = custom_material_mesh.vertices[0].x
-    position_y = custom_material_mesh.vertices[0].y
-    position_z = custom_material_mesh.vertices[0].z
-    terry_custom_material_mesh.ectransform.position = [position_x, position_y, position_z]
-    terry_custom_material_mesh.ectransform.rotation = [0, 0, 0]
-    terry_custom_material_mesh.ectransform.scale = [1, 1, 1]
+    terry_custom_material_mesh.ectransform = ECTransform(custom_material_mesh.vertices[0], Rotation3D(0, 0, 0),
+                                                         Scale3D(1, 1, 1))
     # subtract position from poluline points
     for i in custom_material_mesh.vertices:
-        x = i.x - position_x
-        y = i.z - position_z
+        x = i.x - custom_material_mesh.vertices[0].x
+        y = i.z - custom_material_mesh.vertices[0].z
         point = Point2D(x, y)
         # print(point.__dict__)
         terry_custom_material_mesh.polyline.append(point)
@@ -206,12 +169,9 @@ def convert_custom_material_mesh(custom_material_mesh: CustomMaterialMesh) -> Te
 
 def convert_light_probe(light_probe: LightProbe) -> TerryLightProbe:
     terry_light_probe = TerryLightProbe()
-    terry_light_probe.ectransform = ECTransform()
     terry_light_probe.radius = int(light_probe.radius)
     terry_light_probe.is_primary = light_probe.is_primary
-    terry_light_probe.ectransform.position = light_probe.position
-    terry_light_probe.ectransform.rotation = [0, 0, 0]
-    terry_light_probe.ectransform.scale = [1, 1, 1]
+    terry_light_probe.ectransform = ECTransform(light_probe.position, Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
 
     return terry_light_probe
 
@@ -225,19 +185,15 @@ animation_type = {
 
 def convert_point_light(point_light: PointLight) -> TerryPointLight:
     terry_point_light = TerryPointLight()
-    terry_point_light.ectransform = ECTransform()
     terry_point_light.radius = point_light.radius
     terry_point_light.colour_scale = point_light.colour_scale
     terry_point_light.animation_type = animation_type[point_light.animation_type]
     terry_point_light.colour_min = point_light.colour_min
     terry_point_light.random_offset = point_light.random_offset
-    terry_point_light.ectransform.position = point_light.position
     terry_point_light.falloff_type = point_light.falloff_type
     terry_point_light.for_light_probes_only = point_light.flags["light_probes_only"]
-    terry_point_light.ectransform.position = point_light.position
+    terry_point_light.ectransform = ECTransform(point_light.position, Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
     terry_point_light.animation_speed_scale = (int(point_light.params[0]), int(point_light.params[1]))
-    terry_point_light.ectransform.rotation = [0, 0, 0]
-    terry_point_light.ectransform.scale = [1, 1, 1]
     terry_point_light.colour = ColourRGBA(int(point_light.colour.red * 255), int(point_light.colour.green * 255),
                                           int(point_light.colour.blue * 255), 255)
 
@@ -246,14 +202,12 @@ def convert_point_light(point_light: PointLight) -> TerryPointLight:
 
 def convert_playable_area(playable_area: PlayableArea) -> TerryPlayableArea:
     terry_playable_area = TerryPlayableArea()
-    terry_playable_area.ectransform = ECTransform()
+
     terry_playable_area.width = playable_area.max_x - playable_area.min_x
     terry_playable_area.height = playable_area.max_y - playable_area.min_y
     x = playable_area.min_x + (terry_playable_area.width / 2)
     z = playable_area.min_y + (terry_playable_area.height / 2)
-    terry_playable_area.ectransform.position = [x, 0, z]
-    terry_playable_area.ectransform.rotation = [0, 0, 0]
-    terry_playable_area.ectransform.scale = [1, 1, 1]
+    terry_playable_area.ectransform = ECTransform(Point3D(x, 0, z), Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
     terry_playable_area.deployment_locations = []
     for key, value in playable_area.flags.items():
         if value:
@@ -265,10 +219,7 @@ def convert_playable_area(playable_area: PlayableArea) -> TerryPlayableArea:
 
 def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
     terry_spot_light = TerrySpotLight()
-    terry_spot_light.ectransform = ECTransform()
-    terry_spot_light.ectransform.position = spot_light.position
-    terry_spot_light.ectransform.rotation = [0, 0, 0]
-    terry_spot_light.ectransform.scale = [1, 1, 1]
+    terry_spot_light.ectransform = ECTransform(spot_light.position, Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
     # colours
     max_color = max(spot_light.colour.red, spot_light.colour.green, spot_light.colour.blue)
     terry_spot_light.intensity = max_color
@@ -288,23 +239,20 @@ def convert_spot_light(spot_light: SpotLight) -> TerrySpotLight:
 
 def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
     terry_sound_shape = TerrySoundShape()
-    terry_sound_shape.ectransform = ECTransform()
     terry_sound_shape.key = sound_shape.key
     terry_sound_shape.type = sound_shape.type
     if terry_sound_shape.type != "SST_RIVER":
+        terry_sound_shape.ectransform = ECTransform(sound_shape.points[0], Rotation3D(0,0,0), Scale3D(1,1,1))
         position_x = sound_shape.points[0].x
         position_y = sound_shape.points[0].y
         position_z = sound_shape.points[0].z
-        terry_sound_shape.ectransform.position = [position_x, position_y, position_z]
-        terry_sound_shape.ectransform.rotation = [0, 0, 0]
-        terry_sound_shape.ectransform.scale = [1, 1, 1]
         # subtract position from poluline points
         if terry_sound_shape.type == "SST_MULTI_POINT":
             terry_sound_shape.points_cloud = []
             for i in sound_shape.points:
-                x = i.x - position_x
-                y = i.y - position_y
-                z = i.z - position_z
+                x = i.x - sound_shape.points[0].x
+                y = i.y - sound_shape.points[0].y
+                z = i.z - sound_shape.points[0].z
                 point = Point3D(x, y, z)
                 terry_sound_shape.points_cloud.append(point)
         else:
@@ -322,19 +270,8 @@ def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
 
 def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSecne:
     terry_composite_scene = TerryCompositeSecne()
-    terry_composite_scene.ectransform = ECTransform()
     terry_composite_scene.path = composite_scene.scene_file
-    terry_composite_scene.ectransform.position = []
-    for i in range(3):
-        terry_composite_scene.ectransform.position.append(composite_scene.transform[i])
-
-    coordinates = composite_scene.coordinates
-    terry_composite_scene.ectransform.scale = list(map(mod_vector, coordinates))
-    for i in range(3):
-        scale = terry_composite_scene.ectransform.scale[i]
-        for j in range(3):
-            coordinates[i][j] /= scale
-    terry_composite_scene.ectransform.rotation = degrees_tuple(get_angles_XYZ(transpose(coordinates)))
+    terry_composite_scene.ectransform = ECTransform(*get_transforms(composite_scene.transform))
     terry_composite_scene.autoplay = composite_scene.flags["autoplay"]
 
     return terry_composite_scene

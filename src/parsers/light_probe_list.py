@@ -5,11 +5,11 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import LightProbe
 
-
+from wh_common_objects import Point3D
 
 def read_light_probe(file):
     light_probe = LightProbe()
-    light_probe.position = (float4(file), float4(file), float4(file))
+    light_probe.position = Point3D(float4(file), float4(file), float4(file))
     light_probe.radius = float4(file)
     light_probe.is_primary = bool1(file)
     light_probe.height_mode = string(file)

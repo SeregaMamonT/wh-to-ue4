@@ -1,7 +1,7 @@
 from typing import BinaryIO
 
 from reader import bool1, string, int1, int2, int4, float4, read_list, assert_version, int8, read_coordinates, \
-    read_translation, get_scale, unscale, read_flags
+    read_translation, get_scale, unscale, read_flags, read_transform_4_x_3
 
 from wh_binary_objects import Prop
 
@@ -33,14 +33,7 @@ def read_prop_prop_instance(file: BinaryIO):
     prop.key_index = int2(file)
     file.read(2)  # TODO
 
-
-    prop.coordinates = [[None] * 3 for i in range(3)]
-    for i in range(9):
-        prop.coordinates[i // 3][i % 3] = float4(file)
-    prop.translation = [None] * 3
-    for i in range(3):
-        prop.translation[i] = float4(file)
-
+    prop.transform = read_transform_4_x_3(file)
     prop.decal = bool1(file)
     # print('Decal: ', prop.decal)
     file.read(7)  # flags from logic_decal to animated

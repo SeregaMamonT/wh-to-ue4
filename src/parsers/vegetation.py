@@ -5,6 +5,7 @@ from reader import bool1, string, int1, int2, int4, float4, read_list, assert_ve
 
 from wh_binary_objects import Tree, PrefabTreeProps
 
+from wh_common_objects import Point3D
 
 def read_tree(file):
     tree = Tree()
@@ -14,7 +15,7 @@ def read_tree(file):
     # print(tree.key)
     for i in range(amount):
         props = PrefabTreeProps()
-        props.position = (float4(file), float4(file), float4(file))
+        props.position = Point3D(float4(file), float4(file), float4(file))
         props.scale = float4(file)
         props.is_freeform = bool1(file)
         # print(props.__dict__)

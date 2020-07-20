@@ -34,9 +34,7 @@ class Particle:
 class Prop:
     key_index: int
     key: str
-    translation: Vector
-    coordinates: Matrix
-    scale: Vector
+    transform: Matrix
     decal: bool
     flags: Dict[str, bool]
     decal_parallax_scale: float
@@ -226,8 +224,7 @@ class CompositeScene:
     height_mode: str
     pdlc_mask: int
     flags: Dict[str, bool]
-    coordinates: Matrix
-    transform: List[float]
+    transform: Matrix
 
 
 class BMDData:
