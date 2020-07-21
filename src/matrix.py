@@ -1,5 +1,7 @@
 from math import cos, sin, radians, pi, asin, degrees, atan2
 
+from app_typing import Matrix, Vector
+
 
 def get_matrix(psi, th, phi):
     sin_th = sin(th)
@@ -32,7 +34,7 @@ def get_angles_deg(R):
     return tuple(map(degrees, get_angles(R)))
 
 
-def get_angles(R):
+def get_angles(R: Matrix):
     if not eq(abs(R[2][0]), 1):
         th1 = -asin(R[2][0])
         th2 = pi - th1
@@ -52,6 +54,23 @@ def get_angles(R):
         else:
             th = -pi / 2
             psi = -phi + atan2(-R[0][1], -R[0][2])
+        return psi, th, phi
+
+
+def get_angles_from_direction(direction: Vector):
+    psi = 0
+    if not eq(abs(direction[2]), 1):
+        th1 = -asin(direction[2])
+        th2 = pi - th1
+        phi1 = atan2(direction[1] / cos(th1), direction[0] / cos(th1))
+        phi2 = atan2(direction[1] / cos(th2), direction[0] / cos(th2))
+
+        sol1 = (psi, th1, phi1)
+        sol2 = (psi, th2, phi2)
+        return sol1 if sum(map(abs, sol1)) < sum(map(abs, sol2)) else sol2
+    else:
+        phi = 0
+        th = pi / 2 if eq(direction[2], -1) else -pi / 2
         return psi, th, phi
 
 
