@@ -77,6 +77,11 @@ class TerryPrefabInstance:
     ecterrainclamp: ECTerrainClamp
 
 
+class TerryBuildingProjectileEmitter:
+    building_index: int
+    ectransform: ECTransform
+
+
 class TerryTree:
     key: str
     ectransform: ECTransform

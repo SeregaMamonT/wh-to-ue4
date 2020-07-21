@@ -149,9 +149,9 @@ class TerrainStencilTriangle:
 
 class BuildingProjectileEmitter:
     position: Point3D
-    direction = Point3D
+    direction: Vector
     building_index: int
-    height_mode = str
+    height_mode: str
 
 
 class PlayableArea:

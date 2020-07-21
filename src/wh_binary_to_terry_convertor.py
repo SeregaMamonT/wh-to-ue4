@@ -1,7 +1,7 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
     TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
-    TerryCompositeSecne, Scale3D, Rotation3D
+    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter
 
 from typing import BinaryIO, List
 from app_typing import Matrix, Vector
@@ -9,11 +9,12 @@ from math import degrees
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
-    CompositeScene
+    CompositeScene, BuildingProjectileEmitter
 
 from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
     degrees_tuple
 
+from math import cos, sin, radians, pi, asin, degrees, atan2
 
 def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
@@ -229,7 +230,7 @@ def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
     terry_sound_shape.key = sound_shape.key
     terry_sound_shape.type = sound_shape.type
     if terry_sound_shape.type != "SST_RIVER":
-        terry_sound_shape.ectransform = ECTransform(sound_shape.points[0], Rotation3D(0,0,0), Scale3D(1,1,1))
+        terry_sound_shape.ectransform = ECTransform(sound_shape.points[0], Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
         position_x = sound_shape.points[0].x
         position_y = sound_shape.points[0].y
         position_z = sound_shape.points[0].z
@@ -262,6 +263,18 @@ def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSe
     terry_composite_scene.autoplay = composite_scene.flags["autoplay"]
 
     return terry_composite_scene
+
+
+def convert_building_projectile_emitter(
+        building_projectile_emitter: BuildingProjectileEmitter) -> TerryBuildingProjectileEmitter:
+
+    terry_building_projectile_emitter = TerryBuildingProjectileEmitter()
+    terry_building_projectile_emitter.building_index = building_projectile_emitter.building_index
+    rotation_matrix = [[]]
+    # rotation = Rotation3D(*map(degrees, get_angles_XYZ(transpose(rotation_matrix))))
+
+
+    return terry_building_projectile_emitter
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:

@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
     convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle, \
     convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light, convert_sound_shape, \
-    convert_composite_scene
+    convert_composite_scene, convert_building_projectile_emitter
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -73,9 +73,11 @@ def map_saver(filename, map_data_tuple: tuple):
     save_particles_list(list(map(convert_particle, map_data.particles)), entities)
     save_light_probe_list(list(map(convert_light_probe, map_data.light_probes)), entities)
     save_point_light_list(list(map(convert_point_light, map_data.point_lights)), entities)
+    for i in map_data.building_projectile_emitters:
+        convert_building_projectile_emitter(i)
     save_playable_area(convert_playable_area(map_data.playable_area), entities)
     save_spot_light_list(list(map(convert_spot_light, map_data.spot_lights)), entities)
-    # save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
+    save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
     # for i in vegetation:
     #     for j in i:
     #         save_tree_list(convert_tree_instance(j), entities)
