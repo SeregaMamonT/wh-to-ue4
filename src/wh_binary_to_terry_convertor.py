@@ -5,16 +5,15 @@ from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, E
 
 from typing import BinaryIO, List
 from app_typing import Matrix, Vector
-from math import degrees
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
     CompositeScene, BuildingProjectileEmitter
 
-from matrix import get_angles_deg, transpose, get_angles_deg_XYZ, get_angles_deg_XZY, get_angles_XYZ, get_angles_XZY, \
-    degrees_tuple
+from matrix import transpose, get_angles_XYZ, get_angles_from_direction
 
-from math import cos, sin, radians, pi, asin, degrees, atan2
+from math import cos, sin, radians, pi, asin, degrees, atan2, sqrt
+
 
 def mod_vector(vector: List):
     return sum([x * x for x in vector]) ** 0.5
@@ -267,13 +266,15 @@ def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSe
 
 def convert_building_projectile_emitter(
         building_projectile_emitter: BuildingProjectileEmitter) -> TerryBuildingProjectileEmitter:
-
     terry_building_projectile_emitter = TerryBuildingProjectileEmitter()
     terry_building_projectile_emitter.building_index = building_projectile_emitter.building_index
-    rotation_matrix = [[]]
-    # rotation = Rotation3D(*map(degrees, get_angles_XYZ(transpose(rotation_matrix))))
+    # *get_angles_from_direction(building_projectile_emitter.direction)
 
-
+    # rotation = (map(degrees, get_angles_from_direction(building_projectile_emitter.direction))
+    terry_building_projectile_emitter.ectransform = ECTransform(building_projectile_emitter.position,
+                                                                Rotation3D(*map(degrees, get_angles_from_direction(
+                                                                    building_projectile_emitter.direction))),
+                                                                Scale3D(1, 1, 1))
     return terry_building_projectile_emitter
 
 

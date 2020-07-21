@@ -19,6 +19,7 @@ from terry_savers.terry_playable_area import save_playable_area
 from terry_savers.terry_spot_light_list import save_spot_light_list
 from terry_savers.terry_sounds_shape_list import save_sound_shape_list
 from terry_savers.terry_composite_scene_list import save_composite_scene_list
+from terry_savers.terry_building_projectile_emitter_list import save_building_projectile_emitter_list
 
 
 class StructureType(Enum):
@@ -73,8 +74,8 @@ def map_saver(filename, map_data_tuple: tuple):
     save_particles_list(list(map(convert_particle, map_data.particles)), entities)
     save_light_probe_list(list(map(convert_light_probe, map_data.light_probes)), entities)
     save_point_light_list(list(map(convert_point_light, map_data.point_lights)), entities)
-    for i in map_data.building_projectile_emitters:
-        convert_building_projectile_emitter(i)
+    save_building_projectile_emitter_list(
+        list(map(convert_building_projectile_emitter, map_data.building_projectile_emitters)), entities)
     save_playable_area(convert_playable_area(map_data.playable_area), entities)
     save_spot_light_list(list(map(convert_spot_light, map_data.spot_lights)), entities)
     save_prefab_instance_list(list(map(convert_prefab_instance, map_data.prefab_instances)), entities)
