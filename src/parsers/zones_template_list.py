@@ -18,7 +18,7 @@ def read_zone_template(file):
     zone_template = ZoneTemplate()
     points_amount = int4(file)
     zone_template.outline = Outline()
-    zone_template.outline.points = Outline.points = []
+    zone_template.outline.points = []
     for i in range(points_amount):
         zone_template.outline.points.append(Point2D(float4(file), float4(file)))
 
