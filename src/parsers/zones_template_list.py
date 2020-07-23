@@ -17,10 +17,11 @@ def read_zones_template_list(file: BinaryIO):
 def read_zone_template(file):
     zone_template = ZoneTemplate()
     points_amount = int4(file)
-    zone_template.outline = Outline()
-    zone_template.outline.points = []
+    outline = Outline()
+    outline.points = []
     for i in range(points_amount):
-        zone_template.outline.points.append(Point2D(float4(file), float4(file)))
+        outline.points.append(Point2D(float4(file), float4(file)))
+    zone_template.outline = outline
 
 
     # <zone_name> <entity_formation_template name=''> and <lines/>

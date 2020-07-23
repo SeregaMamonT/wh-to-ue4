@@ -26,6 +26,14 @@ class ECTerrainClamp:
     terrain_oriented: bool
 
 
+class ECTransformable:
+    ectransform: ECTransform
+
+
+class ECTerrainClampable:
+    ecterrainclamp: ECTerrainClamp
+
+
 class ECBattleProperties:
     allow_in_outfield: bool
 
@@ -35,105 +43,86 @@ class ECPolyline:
     polyline: List[Point2D]
 
 
-class TerryBuilding:
+class TerryBuilding(ECTransformable, ECTerrainClampable):
     key: str
     damage: int
     capture_location: str
     flags: Dict[str, bool]
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
     ecmeshrendersettings: ECMeshRenderSettings
 
 
-class TerryParticle:
+class TerryParticle(ECTransformable, ECTerrainClampable):
     vfx: str
     scale: int
     instance_name: str
     flags: Dict[str, bool]
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
 
 
-class TerryDecal:
+class TerryDecal(ECTransformable, ECTerrainClampable):
     model_path: str
     parallax_scale: float
     tiling: int
     normal_mode: str
     flags: Dict[str, bool]
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
 
 
-class TerryPropBuilding:
+class TerryPropBuilding(ECTransformable, ECTerrainClampable):
     model_path: str
     animation_path: str
     opacity: int
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
     ecbattleproperties: ECBattleProperties
     ecmeshrendersettings: ECMeshRenderSettings
 
 
-class TerryPrefabInstance:
+class TerryPrefabInstance(ECTransformable, ECTerrainClampable):
     key: str
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
 
 
-class TerryBuildingProjectileEmitter:
+class TerryBuildingProjectileEmitter(ECTransformable):
     building_index: int
-    ectransform: ECTransform
 
 
-class TerryZoneTemplate:
+class TerryZoneTemplate(ECTransformable):
     locked: bool
     rank_distance: float
     zone_skirt_distance: float
     polyline: ECPolyline
-    ectransform: ECTransform
 
 
-class TerryRegion:
+class TerryRegion(ECTransformable):
     polyline: ECPolyline
-    ectransform: ECTransform
 
 
-class TerryTree:
+class TerryTree(ECTransformable, ECTerrainClampable):
     key: str
-    ectransform: ECTransform
-    ecterrainclamp: ECTerrainClamp
 
 
-class TerryCustomMaterialMesh:
+class TerryCustomMaterialMesh(ECTransformable):
     material: str
     affects_protection_map: bool
     polyline: List[Point2D]
-    ectransform: ECTransform
 
 
-class TerryTerrainHole:
+class TerryTerrainHole(ECTransformable):
     procedural_exclusion_zone: bool
     procedural_exclusion_zone_margin: int
-    ectransform: ECTransform
     polyline: List[Point2D]
 
 
-class TerryLightProbe:
+class TerryLightProbe(ECTransformable):
     radius: int
     is_primary: bool
-    ectransform: ECTransform
 
 
-class TerryPlayableArea:
+class TerryPlayableArea(ECTransformable):
     width: float
     height: float
     deployment_locations: List[str]
-    ectransform: ECTransform
 
 
-class TerryPointLight:
+class TerryPointLight(ECTransformable):
     colour: ColourRGBA
     colour_scale: float
     radius: float
@@ -143,10 +132,9 @@ class TerryPointLight:
     random_offset: float
     falloff_type: str
     for_light_probes_only: bool
-    ectransform: ECTransform
 
 
-class TerrySpotLight:
+class TerrySpotLight(ECTransformable):
     colour: ColourRGBA
     intensity: float
     length: float
@@ -155,19 +143,16 @@ class TerrySpotLight:
     falloff: float
     volumetric: bool
     gobo: str
-    ectransform: ECTransform
 
 
-class TerrySoundShape:
+class TerrySoundShape(ECTransformable):
     key: str
     type: str
     radius: float
     points: List[Point2D]
     points_cloud: List[Point3D]
-    ectransform: ECTransform
 
 
-class TerryCompositeSecne:
+class TerryCompositeSecne(ECTransformable):
     path: str
     autoplay: bool
-    ectransform: ECTransform

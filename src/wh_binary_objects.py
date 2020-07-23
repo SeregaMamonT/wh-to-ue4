@@ -97,6 +97,9 @@ class CaptureLocation:
 class Outline:
     points: List[Point2D]
 
+    def __init__(self):
+        self.points = []
+
 
 class ZoneTemplate:
     name: str
