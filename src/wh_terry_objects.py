@@ -95,6 +95,11 @@ class TerryZoneTemplate:
     ectransform: ECTransform
 
 
+class TerryRegion:
+    polyline: ECPolyline
+    ectransform: ECTransform
+
+
 class TerryTree:
     key: str
     ectransform: ECTransform

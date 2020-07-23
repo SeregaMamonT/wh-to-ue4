@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
     convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle, \
     convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light, convert_sound_shape, \
-    convert_composite_scene, convert_building_projectile_emitter, convert_zone_template
+    convert_composite_scene, convert_building_projectile_emitter, convert_zone_template, convert_region
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -21,6 +21,8 @@ from terry_savers.terry_sounds_shape_list import save_sound_shape_list
 from terry_savers.terry_composite_scene_list import save_composite_scene_list
 from terry_savers.terry_building_projectile_emitter_list import save_building_projectile_emitter_list
 from terry_savers.terry_zone_template_list import save_zone_template_list
+from terry_savers.terry_go_outlines import save_go_outlines
+from terry_savers.terry_non_terrain_outlines import save_non_terrain_outlines
 
 class StructureType(Enum):
     PREFAB = 1
@@ -85,6 +87,8 @@ def map_saver(filename, map_data_tuple: tuple):
     save_sound_shape_list(list(map(convert_sound_shape, map_data.sound_shapes)), entities)
     save_composite_scene_list(list(map(convert_composite_scene, map_data.composite_scenes)), entities)
     save_zone_template_list(list(map(convert_zone_template, map_data.zones_templates)), entities)
+    save_go_outlines(list(map(convert_region, map_data.go_outlines)), entities)
+    save_non_terrain_outlines(list(map(convert_region, map_data.non_terrain_outlines)), entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 

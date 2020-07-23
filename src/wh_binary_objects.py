@@ -100,7 +100,7 @@ class Outline:
 
 class ZoneTemplate:
     name: str
-    points: List[Point2D]
+    outline: Outline
     transformation: Matrix
 
 

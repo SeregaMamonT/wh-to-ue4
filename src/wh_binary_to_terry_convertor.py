@@ -1,14 +1,14 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
     TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
-    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter, TerryZoneTemplate, ECPolyline
+    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter, TerryZoneTemplate, ECPolyline, TerryRegion
 
 from typing import BinaryIO, List
 from app_typing import Matrix, Vector
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
-    CompositeScene, BuildingProjectileEmitter, ZoneTemplate
+    CompositeScene, BuildingProjectileEmitter, ZoneTemplate, Outline
 
 from matrix import transpose, get_angles_XYZ, get_angles_from_direction
 
@@ -285,24 +285,41 @@ def convert_building_projectile_emitter(
     return terry_building_projectile_emitter
 
 
+def convert_outline_to_polyline(outline: Outline):
+    position_x = outline.points[0].x
+    position_z = outline.points[0].y
+    polyline = ECPolyline()
+    polyline.closed = True
+    polyline.polyline = []
+    for point in outline.points:
+        polyline.polyline.append(Point2D((point.x - position_x), (point.y - position_z)))
+    position = Point3D(position_x, 0, position_z)
+
+    return polyline, position
+
+
 def convert_zone_template(zone_template: ZoneTemplate) -> TerryZoneTemplate:
     terry_zone_template = TerryZoneTemplate()
     terry_zone_template.ectransform = ECTransform(*get_transforms_4_4(zone_template.transformation))
-    position_x = zone_template.points[0].x
-    position_z = zone_template.points[0].y
-    terry_zone_template.polyline = ECPolyline()
-    terry_zone_template.polyline.polyline = []
-    terry_zone_template.ectransform.position.x = position_x
-    terry_zone_template.ectransform.position.z = position_z
+    polyline_data = convert_outline_to_polyline(zone_template.outline)
+    terry_zone_template.polyline = polyline_data[0]
+    terry_zone_template.ectransform.position = polyline_data[1]
     terry_zone_template.locked = True
-    terry_zone_template.polyline.closed = True
-    for point in zone_template.points:
-        terry_zone_template.polyline.polyline.append(Point2D((point.x-position_x),(point.y-position_z)))
     # dont know what this mean, but it is standard for terry
     terry_zone_template.rank_distance = 3
     terry_zone_template.zone_skirt_distance = 3
 
     return terry_zone_template
+
+
+def convert_region(outline: Outline) -> TerryRegion:
+    terry_region = TerryRegion()
+    region_data = convert_outline_to_polyline(outline)
+    terry_region.polyline = region_data[0]
+    terry_region.ectransform = ECTransform(region_data[1], Rotation3D(0, 0, 0), Scale3D(1,1,1))
+
+    return terry_region
+
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:
