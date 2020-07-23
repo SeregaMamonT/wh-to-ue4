@@ -18,12 +18,9 @@ def read_zone_template(file):
     zone_template = ZoneTemplate()
     points_amount = int4(file)
     outline = Outline()
-    outline.points = []
     for i in range(points_amount):
         outline.points.append(Point2D(float4(file), float4(file)))
     zone_template.outline = outline
-
-
     # <zone_name> <entity_formation_template name=''> and <lines/>
     file.read(8)
     # transformation matrix
@@ -31,13 +28,3 @@ def read_zone_template(file):
 
     return zone_template
 
-
-# def read_zones_template_list(file: BinaryIO):
-#     version = int2(file)  # version
-#     zones_amount = int4(file)
-#     zones = []
-#     for i in range(zones_amount):
-#         # read_zone_template(file)
-#         zones.append(read_zone_template(file))
-#
-#     return zones
