@@ -1,7 +1,7 @@
 import random
 from xml.etree.ElementTree import Element, SubElement, tostring
 from typing import Dict, List
-from wh_terry_objects import ECTransform, ECMeshRenderSettings, ECBattleProperties, ECTerrainClamp
+from wh_terry_objects import ECTransform, ECMeshRenderSettings, ECBattleProperties, ECTerrainClamp, ECPolyline
 
 
 def s_float(x):
@@ -46,3 +46,16 @@ def ecbattleproperties_to_xml(entity: Element, ecbattleproperties: ECBattlePrope
     ECBattleProperties = SubElement(entity, "ECBattleProperties", {
         "allow_in_outfield": "false",
     })
+
+
+def ecpolyline_to_xml(entity: Element, ecpolyline: ECPolyline):
+    ECPolyline = SubElement(entity, "ECPolyline", {
+    })
+    polyline = SubElement(ECPolyline, "polyline", {
+        "closed": s_bool(ecpolyline.closed)
+    })
+    for point in ecpolyline.polyline:
+        point = SubElement(polyline, "point", {
+            "x": s_float(point.x),
+            "y": s_float(point.y),
+        })

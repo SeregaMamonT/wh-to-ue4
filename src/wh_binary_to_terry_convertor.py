@@ -1,14 +1,14 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
     TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
-    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter
+    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter, TerryZoneTemplate, ECPolyline
 
 from typing import BinaryIO, List
 from app_typing import Matrix, Vector
 
 from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, CustomMaterialMesh, Point2D, \
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
-    CompositeScene, BuildingProjectileEmitter
+    CompositeScene, BuildingProjectileEmitter, ZoneTemplate
 
 from matrix import transpose, get_angles_XYZ, get_angles_from_direction
 
@@ -37,6 +37,16 @@ def get_transforms(transform: Matrix):
     scale = Scale3D(*map(mod_vector, transform[0:3]))
     rotation_matrix = unscale(transform[0:3], scale.as_vector())
     rotation = Rotation3D(*map(degrees, get_angles_XYZ(transpose(rotation_matrix))))
+
+    return position, rotation, scale
+
+
+def get_transforms_4_4(transformation: Matrix):
+    position = Point3D(*transformation[3][:3])
+    coordinates = transformation[:3]
+    scale = Scale3D(*map(mod_vector, coordinates))
+    coordinates = unscale(coordinates, scale.as_vector())
+    rotation = Rotation3D(*map(lambda angle: -degrees(angle), get_angles_XYZ(coordinates)))
 
     return position, rotation, scale
 
@@ -268,14 +278,31 @@ def convert_building_projectile_emitter(
         building_projectile_emitter: BuildingProjectileEmitter) -> TerryBuildingProjectileEmitter:
     terry_building_projectile_emitter = TerryBuildingProjectileEmitter()
     terry_building_projectile_emitter.building_index = building_projectile_emitter.building_index
-    # *get_angles_from_direction(building_projectile_emitter.direction)
-
-    # rotation = (map(degrees, get_angles_from_direction(building_projectile_emitter.direction))
     terry_building_projectile_emitter.ectransform = ECTransform(building_projectile_emitter.position,
                                                                 Rotation3D(*map(degrees, get_angles_from_direction(
                                                                     building_projectile_emitter.direction))),
                                                                 Scale3D(1, 1, 1))
     return terry_building_projectile_emitter
+
+
+def convert_zone_template(zone_template: ZoneTemplate) -> TerryZoneTemplate:
+    terry_zone_template = TerryZoneTemplate()
+    terry_zone_template.ectransform = ECTransform(*get_transforms_4_4(zone_template.transformation))
+    position_x = zone_template.points[0].x
+    position_z = zone_template.points[0].y
+    terry_zone_template.polyline = ECPolyline()
+    terry_zone_template.polyline.polyline = []
+    terry_zone_template.ectransform.position.x = position_x
+    terry_zone_template.ectransform.position.z = position_z
+    terry_zone_template.locked = True
+    terry_zone_template.polyline.closed = True
+    for point in zone_template.points:
+        terry_zone_template.polyline.polyline.append(Point2D((point.x-position_x),(point.y-position_z)))
+    # dont know what this mean, but it is standard for terry
+    terry_zone_template.rank_distance = 3
+    terry_zone_template.zone_skirt_distance = 3
+
+    return terry_zone_template
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:

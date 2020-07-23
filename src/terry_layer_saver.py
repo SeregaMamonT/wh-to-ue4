@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
     convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle, \
     convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light, convert_sound_shape, \
-    convert_composite_scene, convert_building_projectile_emitter
+    convert_composite_scene, convert_building_projectile_emitter, convert_zone_template
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -20,7 +20,7 @@ from terry_savers.terry_spot_light_list import save_spot_light_list
 from terry_savers.terry_sounds_shape_list import save_sound_shape_list
 from terry_savers.terry_composite_scene_list import save_composite_scene_list
 from terry_savers.terry_building_projectile_emitter_list import save_building_projectile_emitter_list
-
+from terry_savers.terry_zone_template_list import save_zone_template_list
 
 class StructureType(Enum):
     PREFAB = 1
@@ -63,8 +63,6 @@ def map_saver(filename, map_data_tuple: tuple):
     map_data = map_data_tuple[0]
     vegetation = map_data_tuple[1]
     entities = Element("entities")
-    for i in map_data.buildings:
-        convert_building(i)
     save_buildings_list(list(map(convert_building, map_data.buildings)), entities)
     for key, props in map_data.props.items():
         decals = filter(lambda prop: prop.decal, props)
@@ -82,12 +80,11 @@ def map_saver(filename, map_data_tuple: tuple):
     # for i in vegetation:
     #     for j in i:
     #         save_tree_list(convert_tree_instance(j), entities)
-    for i in map_data.custom_material_meshes:
-        convert_custom_material_mesh(i)
     save_custom_material_mesh_list(list(map(convert_custom_material_mesh, map_data.custom_material_meshes)), entities)
     # convert_terrain_stencil_triangle(map_data.terrain_stencil_triangle)
     save_sound_shape_list(list(map(convert_sound_shape, map_data.sound_shapes)), entities)
     save_composite_scene_list(list(map(convert_composite_scene, map_data.composite_scenes)), entities)
+    save_zone_template_list(list(map(convert_zone_template, map_data.zones_templates)), entities)
     content = tostring(entities, "utf-8").decode("utf-8")
     save_to_file(content, filename + ".xml")
 

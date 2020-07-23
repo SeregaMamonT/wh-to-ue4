@@ -30,6 +30,11 @@ class ECBattleProperties:
     allow_in_outfield: bool
 
 
+class ECPolyline:
+    closed: bool
+    polyline: List[Point2D]
+
+
 class TerryBuilding:
     key: str
     damage: int
@@ -79,6 +84,14 @@ class TerryPrefabInstance:
 
 class TerryBuildingProjectileEmitter:
     building_index: int
+    ectransform: ECTransform
+
+
+class TerryZoneTemplate:
+    locked: bool
+    rank_distance: float
+    zone_skirt_distance: float
+    polyline: ECPolyline
     ectransform: ECTransform
 
 
