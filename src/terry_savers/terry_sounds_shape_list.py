@@ -6,6 +6,8 @@ from terry_savers.xml_saver_utils import ectransform_to_xml, ecmeshrendersetting
 
 from wh_terry_objects import TerrySoundShape
 
+from version_holder import VersionHolder
+
 
 def save_sound_shape_sphere(sound_shape: TerrySoundShape, entity):
     ectransform_to_xml(entity, sound_shape.ectransform)
@@ -48,12 +50,15 @@ def save_sound_shape_polyline(sound_shape: TerrySoundShape, entity):
     })
 
 
-def save_sound_shape_river(sound_shape: TerrySoundShape, entity):
-    return
+# sound_type_savers = VersionHolder('Sound shape type', {
+#     "SST_POINT": save_sound_shape_point,
+#     "SST_SPHERE": save_sound_shape_sphere,
+#     "SST_MULTI_POINT": save_sound_shape_point_cloud,
+#     "SST_LINE_LIST": save_sound_shape_polyline,
+# })
 
 
 type_savers = {
-    "SST_RIVER": save_sound_shape_river,
     "SST_POINT": save_sound_shape_point,
     "SST_SPHERE": save_sound_shape_sphere,
     "SST_MULTI_POINT": save_sound_shape_point_cloud,
@@ -74,5 +79,6 @@ def save_sound_shape_list(sound_shapes: List[TerrySoundShape], entities: Element
         ECSoundMarker = SubElement(entity, "ECSoundMarker", {
             "key": sound_shape.key,
         })
+        # sound_type_savers.get_reader(sound_shape.type)(sound_shape, entity)
         get_type_saver(sound_shape.type)(sound_shape, entity)
 

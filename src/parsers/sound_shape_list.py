@@ -45,10 +45,10 @@ def read_sound_shape_common(file):
     sound_shape.inner_cube = Cube(float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
     sound_shape.outer_cube = Cube(float4(file), float4(file), float4(file), float4(file), float4(file), float4(file))
     river_nodes_amount = int4(file)
-    sound_shape.river_nodes_list = []
+    sound_shape.river_nodes = []
     for i in range(river_nodes_amount):
         river_node_version = int2(file)
-        sound_shape.river_nodes_list.append(river_node_versions.get_reader(river_node_version)(file))
+        sound_shape.river_nodes.append(river_node_versions.get_reader(river_node_version)(file))
     sound_shape.clamp_to_surface = bool1(file)
     sound_shape.height_mode = string(file)
     sound_shape.campaign_type_mask = int4(file)
@@ -67,6 +67,7 @@ def read_river_node_v1(file):
     river_node.vertex = Point3D(float4(file), float4(file), float4(file))
     river_node.width = float4(file)
     river_node.flow_speed = float4(file)
+    #print(river_node.vertex.__dict__)
 
     return river_node
 

@@ -1,7 +1,8 @@
 from wh_terry_objects import TerryBuilding, ECTransform, ECMeshRenderSettings, ECTerrainClamp, TerryParticle, \
     ECBattleProperties, TerryDecal, TerryPropBuilding, TerryPrefabInstance, TerryTree, TerryCustomMaterialMesh, \
     TerryTerrainHole, TerryLightProbe, TerryPointLight, TerryPlayableArea, TerrySpotLight, TerrySoundShape, \
-    TerryCompositeSecne, Scale3D, Rotation3D, TerryBuildingProjectileEmitter, TerryZoneTemplate, ECPolyline, TerryRegion
+    TerryCompositeScene, Scale3D, Rotation3D, TerryBuildingProjectileEmitter, TerryZoneTemplate, ECPolyline, \
+    TerryRegion, TerryRiver, TerrySplinePoint
 
 from typing import BinaryIO, List
 from app_typing import Matrix, Vector
@@ -265,8 +266,38 @@ def convert_sound_shape(sound_shape: SoundShape) -> TerrySoundShape:
     return terry_sound_shape
 
 
-def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeSecne:
-    terry_composite_scene = TerryCompositeSecne()
+def convert_river(sound_shape: SoundShape) -> TerryRiver:
+    terry_river = TerryRiver()
+    # setting default values for now
+    terry_river.spline_closed = False
+    terry_river.spline_step_size = 15
+    terry_river.terrain_relative = True
+    terry_river.reverse_direction = False
+    position_x = sound_shape.river_nodes[0].vertex.x
+    position_y = sound_shape.river_nodes[0].vertex.y
+    position_z = sound_shape.river_nodes[0].vertex.z
+    terry_river.ectransform = ECTransform(
+        Point3D(position_x, position_y, position_z), Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
+    for river_node in sound_shape.river_nodes:
+        width = river_node.width
+        flow_speed = river_node.flow_speed
+        position = Point3D(river_node.vertex.x - position_x, river_node.vertex.y - position_y,
+                           river_node.vertex.z - position_z)
+        # need to find a way how to calculate those values
+        tangent_in = [0, 0, 0]
+        tangent_out = [0, 0, 0]
+        terrain_offset = 0
+        alpha_fade = 1
+        foam_amount = 0.1
+        spline_point = TerrySplinePoint(position, tangent_in, tangent_out, width, terrain_offset, alpha_fade,
+                                        flow_speed, foam_amount)
+        terry_river.spline.append(spline_point)
+
+    return terry_river
+
+
+def convert_composite_scene(composite_scene: CompositeScene) -> TerryCompositeScene:
+    terry_composite_scene = TerryCompositeScene()
     terry_composite_scene.path = composite_scene.scene_file
     terry_composite_scene.ectransform = ECTransform(*get_transforms(composite_scene.transform))
     terry_composite_scene.autoplay = composite_scene.flags["autoplay"]
@@ -316,10 +347,9 @@ def convert_region(outline: Outline) -> TerryRegion:
     terry_region = TerryRegion()
     region_data = convert_outline_to_polyline(outline)
     terry_region.polyline = region_data[0]
-    terry_region.ectransform = ECTransform(region_data[1], Rotation3D(0, 0, 0), Scale3D(1,1,1))
+    terry_region.ectransform = ECTransform(region_data[1], Rotation3D(0, 0, 0), Scale3D(1, 1, 1))
 
     return terry_region
-
 
 
 def convert_terrain_stencil_triangle(triangles: List[TerrainStencilTriangle]) -> TerryTerrainHole:

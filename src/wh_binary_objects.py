@@ -189,6 +189,7 @@ class RiverNode:
     flow_speed: float
     vertex: Point3D
 
+
 class SoundShape:
     key: str
     type: str

@@ -5,8 +5,6 @@ from app_typing import Matrix, Vector
 from wh_common_objects import Point2D, Point3D, ColourRGBA, ColourRGB, Cube, Scale3D, Rotation3D
 
 
-
-
 class ECTransform:
 
     def __init__(self, position: Point3D, rotation: Rotation3D, scale: Scale3D):
@@ -153,6 +151,30 @@ class TerrySoundShape(HasECTransform):
     points_cloud: List[Point3D]
 
 
-class TerryCompositeSecne(HasECTransform):
+class TerryCompositeScene(HasECTransform):
     path: str
     autoplay: bool
+
+
+class TerrySplinePoint:
+    def __init__(self, position: Point3D, tangent_in: Vector, tangent_out: Vector, width: float, terrain_offset: float,
+                 alpha_fade: float, flow_speed: float, foam_amount: float):
+        self.position = position
+        self.tangent_in = tangent_in
+        self.tangent_out = tangent_out
+        self.width = width
+        self.terrain_offset = terrain_offset
+        self.alpha_fade = alpha_fade
+        self.flow_speed = flow_speed
+        self.foam_amount = foam_amount
+
+
+class TerryRiver(HasECTransform):
+    spline_step_size: float
+    terrain_relative: bool
+    reverse_direction: bool
+    spline_closed: bool
+    spline: List[TerrySplinePoint]
+
+    def __init__(self):
+        self.spline = []

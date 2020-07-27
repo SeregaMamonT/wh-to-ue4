@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from wh_binary_to_terry_convertor import convert_building, convert_particle, convert_decal, convert_prop_building, \
     convert_prefab_instance, convert_tree_instance, convert_custom_material_mesh, convert_terrain_stencil_triangle, \
     convert_light_probe, convert_point_light, convert_playable_area, convert_spot_light, convert_sound_shape, \
-    convert_composite_scene, convert_building_projectile_emitter, convert_zone_template, convert_region
+    convert_composite_scene, convert_building_projectile_emitter, convert_zone_template, convert_region, convert_river
 
 from terry_savers.terry_buildings_list import save_buildings_list
 from terry_savers.terry_particles_list import save_particles_list
@@ -23,6 +23,9 @@ from terry_savers.terry_building_projectile_emitter_list import save_building_pr
 from terry_savers.terry_zone_template_list import save_zone_template_list
 from terry_savers.terry_go_outlines import save_go_outlines
 from terry_savers.terry_non_terrain_outlines import save_non_terrain_outlines
+from terry_savers.terry_river_list import save_river_list
+
+
 
 class StructureType(Enum):
     PREFAB = 1
@@ -84,7 +87,12 @@ def map_saver(filename, map_data_tuple: tuple):
     #         save_tree_list(convert_tree_instance(j), entities)
     save_custom_material_mesh_list(list(map(convert_custom_material_mesh, map_data.custom_material_meshes)), entities)
     # convert_terrain_stencil_triangle(map_data.terrain_stencil_triangle)
-    save_sound_shape_list(list(map(convert_sound_shape, map_data.sound_shapes)), entities)
+
+    rivers = list(filter(lambda sound_shape: sound_shape.type == 'SST_RIVER', map_data.sound_shapes))
+    sounds = list(filter(lambda sound_shape: not sound_shape.type == 'SST_RIVER', map_data.sound_shapes))
+
+    save_sound_shape_list(list(map(convert_sound_shape, sounds)), entities)
+    save_river_list(list(map(convert_river, rivers)), entities)
     save_composite_scene_list(list(map(convert_composite_scene, map_data.composite_scenes)), entities)
     save_zone_template_list(list(map(convert_zone_template, map_data.zones_templates)), entities)
     save_go_outlines(list(map(convert_region, map_data.go_outlines)), entities)
