@@ -11,7 +11,7 @@ from wh_binary_objects import Building, Particle, Prop, PrefabInstance, Tree, Cu
     TerrainStencilTriangle, LightProbe, PointLight, ColourRGBA, PlayableArea, SpotLight, SoundShape, Point3D, \
     CompositeScene, BuildingProjectileEmitter, ZoneTemplate, Outline
 
-from matrix import transpose, get_angles_XYZ, get_angles_from_direction
+from matrix import transpose, get_angles_XYZ, get_angles_from_direction, get_angles
 
 from math import cos, sin, radians, pi, asin, degrees, atan2, sqrt
 
@@ -37,7 +37,7 @@ def get_transforms(transform: Matrix):
     position = Point3D(*transform[3])
     scale = Scale3D(*map(mod_vector, transform[0:3]))
     rotation_matrix = unscale(transform[0:3], scale.as_vector())
-    rotation = Rotation3D(*map(degrees, get_angles_XYZ(transpose(rotation_matrix))))
+    rotation = Rotation3D(*map(degrees, get_angles(transpose(rotation_matrix))))
 
     return position, rotation, scale
 
