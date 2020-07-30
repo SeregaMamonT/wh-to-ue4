@@ -16,8 +16,8 @@ def get_transforms(transform: Matrix):
     scale_temp = [*map(mod_vector, transform[0:3])]
     rotation_matrix = unscale(transform[0:3], scale_temp)
     scale = RelativeScale3D(scale_temp[0], scale_temp[2], scale_temp[1])
-    temp_rotation  = [*map(degrees, get_angles_XZY_new(transpose(rotation_matrix)))]
-    rotation = RelativeRotation(temp_rotation[0], -temp_rotation[2], temp_rotation[1])
+    temp_rotation = [*map(degrees, get_angles_XZY_new(transpose(rotation_matrix)))]
+    rotation = RelativeRotation(temp_rotation[0], temp_rotation[2], temp_rotation[1])
 
     return position, rotation, scale
 
