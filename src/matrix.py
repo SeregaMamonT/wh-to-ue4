@@ -3,18 +3,49 @@ from math import cos, sin, radians, pi, asin, degrees, atan2
 from app_typing import Matrix, Vector
 
 
-def get_matrix(psi, th, phi):
-    sin_th = sin(th)
-    cos_th = cos(th)
-    sin_phi = sin(phi)
-    cos_phi = cos(phi)
-    sin_psi = sin(psi)
-    cos_psi = cos(psi)
+def get_matrix_XYZ(psi, th, phi):
+    sin1, cos1 = sin(psi), cos(psi)
+    sin2, cos2 = sin(th), cos(th)
+    sin3, cos3 = sin(phi), cos(phi)
     return [
-        [cos_th * cos_phi, sin_psi * sin_th * cos_phi - cos_psi * sin_phi, cos_psi * sin_th * cos_phi + sin_psi * sin_phi],
-        [cos_th * sin_phi, sin_psi * sin_th * sin_phi + cos_psi * cos_phi, cos_psi * sin_th * sin_phi - sin_psi * cos_phi],
-        [-sin_th, sin_psi * cos_th, cos_psi * cos_th],
+        [cos2 * cos3,   sin1 * sin2 * cos3 - cos1 * sin3,   cos1 * sin2 * cos3 + sin1 * sin3],
+        [cos2 * sin3,   sin1 * sin2 * sin3 + cos1 * cos3,   cos1 * sin2 * sin3 - sin1 * cos3],
+        [-sin2,         sin1 * cos2,                        cos1 * cos2],
     ]
+
+
+def get_matrix_XZY(psi, th, phi):
+    sin1, cos1 = sin(psi), cos(psi)
+    sin2, cos2 = sin(th), cos(th)
+    sin3, cos3 = sin(phi), cos(phi)
+    return [
+        [cos2 * cos3,   -cos3 * sin2 * cos1 + sin3 * sin1,  cos3 * sin2 * sin1 + sin3 * cos1],
+        [sin2,          cos1 * cos2,                        -cos2 * sin1],
+        [-sin3 * cos2,  sin3 * sin2 * cos1 + cos3 * sin1,   -sin3 * sin2 * sin1 + cos3 * cos1],
+    ]
+
+
+def get_angles_XZY_new(R):
+    if not eq(abs(R[1][0]), 1):
+        th1 = asin(R[1][0])
+        th2 = pi - th1
+        psi1 = atan2(-R[1][2] / cos(th1), R[1][1] / cos(th1))
+        psi2 = atan2(-R[1][2] / cos(th2), R[1][1] / cos(th2))
+        phi1 = atan2(-R[2][0] / cos(th1), R[0][0] / cos(th1))
+        phi2 = atan2(-R[2][0] / cos(th2), R[0][0] / cos(th2))
+
+        sol1 = (psi1, th1, phi1)
+        sol2 = (psi2, th2, phi2)
+        return sol1 if sum(map(abs, sol1)) < sum(map(abs, sol2)) else sol2
+    else:
+        phi = 0
+        if eq(R[1][0], 1):
+            th = pi / 2
+            psi = atan2(R[2][1], R[2][2]) - phi
+        else:
+            th = -pi / 2
+            psi = phi - atan2(R[0][2], R[0][1])
+        return psi, th, phi
 
 
 def transpose(a):
@@ -45,7 +76,7 @@ def get_angles(R: Matrix):
 
         sol1 = (psi1, th1, phi1)
         sol2 = (psi2, th2, phi2)
-        return sol1 if sum(sol1) < sum(sol2) else sol2
+        return sol1 if sum(map(abs, sol1)) < sum(map(abs, sol2)) else sol2
     else:
         phi = 0
         if eq(R[2][0], -1):
@@ -123,6 +154,6 @@ def get_angles_XZY(R):
 
 
 if __name__ == "__main__":
-    a = get_matrix(radians(0), radians(95.0), radians(0))
+    a = get_matrix_XYZ(radians(0), radians(95.0), radians(0))
     angles = get_angles(a)
     print(*map(degrees, angles))
