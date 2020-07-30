@@ -7,7 +7,7 @@ from terry_layer_saver import terry_layer_saver, StructureType
 from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
 from src.wh_parser import read_map, read_prefab, read_prefab_vegetation, read_map_vegetation
-
+from ue4_saver import save_ue4_prefab_data
 
 def format_float(x):
     return "{:.5f}".format(x).rstrip("0").strip(".")
@@ -147,6 +147,7 @@ def parse_prefabs(prefab_names):
         print("Prefab " + prefab_name)
         prefab_parsing_data = parse_prefab(prefab_name)
         terry_layer_saver(prefab_name, prefab_parsing_data, StructureType.PREFAB)
+        save_ue4_prefab_data(prefab_name, prefab_parsing_data[0])
         print("Prefab and {0} vegetations found".format(len(prefab_parsing_data[1])))
 
 
