@@ -34,3 +34,11 @@ class HasRelativeScale3D:
 class UnrealStaticMesh(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
     name: str
     static_mesh: str
+
+
+class UnrealDecal(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
+    name: str
+    material: str
+    decal: str
+    tiling: float
+    parallax_scale: float

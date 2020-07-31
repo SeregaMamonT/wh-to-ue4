@@ -1,6 +1,6 @@
-from wh_binary_objects import Building
+from wh_binary_objects import Building, Prop
 
-from ue4_objects import UnrealStaticMesh, RelativeLocation, RelativeRotation, RelativeScale3D
+from ue4_objects import UnrealStaticMesh, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecal
 
 from app_typing import Matrix, Vector
 
@@ -25,7 +25,7 @@ def get_transforms(transform: Matrix):
 def convert_building(building: Building, index: int, directory: str) -> UnrealStaticMesh:
     static_mesh = UnrealStaticMesh()
     static_mesh.name = "{0}_{1}_GEN_VARIABLE".format(building.building_key, index)
-    print(static_mesh.name)
+    # print(static_mesh.name)
     static_mesh.static_mesh = 'StaticMesh=StaticMesh\'"{0}/{1}.{1}"\''.format(directory, building.building_key)
     transform = get_transforms(building.transform)
     static_mesh.relative_location = transform[0]
@@ -33,3 +33,20 @@ def convert_building(building: Building, index: int, directory: str) -> UnrealSt
     static_mesh.relative_scale_3d = transform[2]
 
     return static_mesh
+
+
+def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecal:
+    unreal_decal = UnrealDecal()
+    temp_string = decal.key.replace('rigidmodels/decals/wood elf/', '')
+    temp_string = temp_string.replace('.rigid_model_v2', '')
+    s = decal.key[decal.key.rfind('/') + 1:].split('.')[0]
+    unreal_decal.name = "{0}_{1}_GEN_VARIABLE".format(s, index)
+    unreal_decal.material = '\'"{0}/{1}.{1}"\''.format(directory, s)
+    unreal_decal.tiling = decal.decal_tiling+1
+    unreal_decal.parallax_scale = decal.decal_parallax_scale
+    transform = get_transforms(decal.transform)
+    unreal_decal.relative_location = transform[0]
+    unreal_decal.relative_rotation = transform[1]
+    unreal_decal.relative_scale_3d = transform[2]
+
+    return unreal_decal
