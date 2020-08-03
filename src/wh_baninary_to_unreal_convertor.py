@@ -1,7 +1,7 @@
 from wh_binary_objects import Building, Prop
 
 from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy, \
-    UnrealStaticMesh, Quaternion, Transform
+    UnrealStaticMesh, Quaternion, Transform, UnrealDecal
 
 from app_typing import Matrix, Vector
 
@@ -46,19 +46,6 @@ def get_transforms(transform: Matrix):
     return position, rotation, scale
 
 
-def convert_building_cope(building: Building, index: int, directory: str) -> UnrealStaticMeshCopy:
-    static_mesh = UnrealStaticMeshCopy()
-    static_mesh.name = "{0}_{1}_GEN_VARIABLE".format(building.building_key, index)
-    # print(static_mesh.name)
-    static_mesh.static_mesh = 'StaticMesh=StaticMesh\'"{0}/{1}.{1}"\''.format(directory, building.building_key)
-    transform = get_transforms(building.transform)
-    static_mesh.relative_location = transform[0]
-    static_mesh.relative_rotation = transform[1]
-    static_mesh.relative_scale_3d = transform[2]
-
-    return static_mesh
-
-
 def convert_building(building: Building, index: int, directory: str) -> UnrealStaticMesh:
     static_mesh = UnrealStaticMesh()
     if building.properties.starting_damage_unary < 1:
@@ -72,11 +59,43 @@ def convert_building(building: Building, index: int, directory: str) -> UnrealSt
     static_mesh.transform.Translation = transform[0]
     static_mesh.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
     static_mesh.transform.Scale3D = transform[2]
-    #print(static_mesh.__dict__)
+    # print(static_mesh.__dict__)
+
     return static_mesh
 
 
-def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecalCopy:
+def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecal:
+    unreal_decal = UnrealDecal()
+    s = decal.key[decal.key.rfind('/') + 1:].split('.')[0]
+    unreal_decal.name = "{0}_{1}_GEN_VARIABLE".format(s, index)
+
+    unreal_decal.material = "Material\'{0}/{1}.{1}\'".format(directory, s)
+    unreal_decal.tiling = decal.decal_tiling + 1
+    unreal_decal.parallax_scale = decal.decal_parallax_scale
+    transform = get_transforms(decal.transform)
+    unreal_decal.transform = Transform()
+    unreal_decal.transform.Translation = transform[0]
+    unreal_decal.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
+    unreal_decal.transform.Scale3D = transform[2]
+    unreal_decal.transform.Scale3D.Z = unreal_decal.transform.Scale3D.X
+    return unreal_decal
+
+
+# convertor for copy-paste into unreal method
+def convert_building_copy(building: Building, index: int, directory: str) -> UnrealStaticMeshCopy:
+    static_mesh = UnrealStaticMeshCopy()
+    static_mesh.name = "{0}_{1}_GEN_VARIABLE".format(building.building_key, index)
+    # print(static_mesh.name)
+    static_mesh.static_mesh = 'StaticMesh=StaticMesh\'"{0}/{1}.{1}"\''.format(directory, building.building_key)
+    transform = get_transforms(building.transform)
+    static_mesh.relative_location = transform[0]
+    static_mesh.relative_rotation = transform[1]
+    static_mesh.relative_scale_3d = transform[2]
+
+    return static_mesh
+
+
+def convert_decal_copy(decal: Prop, index: int, directory: str) -> UnrealDecalCopy:
     unreal_decal = UnrealDecalCopy()
     temp_string = decal.key.replace('rigidmodels/decals/wood elf/', '')
     temp_string = temp_string.replace('.rigid_model_v2', '')
