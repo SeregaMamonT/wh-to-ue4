@@ -1,13 +1,36 @@
 from wh_binary_objects import Building, Prop
 
 from ue4_objects import UnrealStaticMesh, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecal, \
-    UnrealStaticMeshJson
+    UnrealStaticMeshJson, Quaternion, Transform
 
 from app_typing import Matrix, Vector
 
 from wh_binary_to_terry_convertor import mod_vector, unscale
 
 from matrix import transpose, get_angles_XZY_new, degrees
+
+from math import cos, sin, radians
+
+
+def to_quaternion(pitch: float, yaw: float, roll: float) -> Quaternion:
+    # yaw (Z), pitch (Y), roll (X)
+
+    # Abbreviations for the various angular functions
+    cy = cos(radians(yaw * 0.5))
+    sy = sin(radians(yaw * 0.5))
+    cp = cos(radians(pitch * 0.5))
+    sp = sin(radians(pitch * 0.5))
+    cr = cos(radians(roll * 0.5))
+    sr = sin(radians(roll * 0.5))
+
+    x = cr * sp * sy - sr * cp * cy
+    y = -cr * sp * cy - sr * cp * sy
+    z = cr * cp * sy - sr * sp * cy
+    w = cr * cp * cy + sr * sp * sy
+
+    q = Quaternion(x, y, z, w)
+
+    return q
 
 
 def get_transforms(transform: Matrix):
@@ -42,9 +65,11 @@ def convert_building_json(building: Building, index: int, directory: str) -> Unr
     # print(static_mesh.name)
     static_mesh.static_mesh = 'StaticMesh\'{0}/{1}\''.format(directory, building.building_key)
     transform = get_transforms(building.transform)
-    static_mesh.location = transform[0]
-    static_mesh.rotation = transform[1]
-    static_mesh.scale = transform[2]
+    static_mesh.transform = Transform
+    static_mesh.transform.Translation = transform[0]
+    static_mesh.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
+    static_mesh.transform.Scale3D = transform[2]
+    print(static_mesh.Name, static_mesh.transform.Rotation.__dict__)
 
     return static_mesh
 

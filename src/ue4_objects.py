@@ -1,6 +1,14 @@
 import json
 
 
+class Quaternion:
+    def __init__(self, x: float, y: float, z: float, w: float):
+        self.X = x
+        self.Y = y
+        self.Z = z
+        self.W = w
+
+
 class RelativeLocation:
     def __init__(self, x: float, y: float, z: float):
         self.X = x
@@ -9,13 +17,10 @@ class RelativeLocation:
 
 
 class RelativeRotation:
-    def __init__(self, pitch: float, yaw: float, roll: float):
-        self.X = pitch
-        self.Y = yaw
-        self.Z = roll
-        # self.Pitch = pitch
-        # self.Yaw = yaw
-        # self.Roll = roll
+    def __init__(self, roll: float, pitch: float, yaw: float):
+        self.X = roll
+        self.Y = pitch
+        self.Z = yaw
 
 
 class RelativeScale3D:
@@ -24,6 +29,15 @@ class RelativeScale3D:
         self.Y = y
         self.Z = z
 
+
+class Transform:
+    Translation: RelativeLocation
+    Rotation: Quaternion
+    Scale3D: RelativeScale3D
+
+
+class HasTransform:
+    transform: Transform
 
 class HasRelativeLocation:
     relative_location: RelativeLocation
@@ -39,6 +53,9 @@ class HasRelativeRotation:
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
+
+
+#class JsonSerrializer:
 
 
 class HasRelativeScale3D:
@@ -79,7 +96,7 @@ class UnrealStaticMesh(HasRelativeLocation, HasRelativeRotation, HasRelativeScal
     static_mesh: str
 
 
-class UnrealStaticMeshJson(HasRelativeLocationJson, HasRelativeRotationJson, HasRelativeScale3DJson):
+class UnrealStaticMeshJson(HasTransform):
     Name: str
     static_mesh: str
 

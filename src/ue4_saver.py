@@ -84,8 +84,8 @@ def save_ue4_prefab_data(filename, prefab: Prefab):
         index = prefab.buildings.index(building)
         content +=save_static_mesh(convert_building(building, index, dir))
         unreal_building = convert_building_json(building, index, dir)
-        json_string += unreal_building.toJSON()
-        json_string += ","
+        # json_string += unreal_building.toJSON()
+        # json_string += ","
     json_string += "\n]"
     save_json(json_string, filename)
     # save_json(data, filename)
