@@ -1,7 +1,7 @@
-from wh_baninary_to_unreal_convertor import convert_building, convert_decal, convert_building_json
+from wh_baninary_to_unreal_convertor import convert_building_cope, convert_decal, convert_building
 
 from terry_savers.xml_saver_utils import s_float
-from ue4_objects import UnrealStaticMesh, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecal
+from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy
 from wh_binary_objects import Prefab
 
 import json
@@ -42,7 +42,7 @@ def save_relative_scale3d(relative_scale_3d: RelativeScale3D) -> str:
     return content
 
 
-def save_static_mesh(static_mesh: UnrealStaticMesh) -> str:
+def save_static_mesh(static_mesh: UnrealStaticMeshCopy) -> str:
     content = 'Begin Object Class=/Script/Engine.StaticMeshComponent '
     content += 'Name="{0}"\n'.format(static_mesh.name)
     content += static_mesh.static_mesh
@@ -55,7 +55,7 @@ def save_static_mesh(static_mesh: UnrealStaticMesh) -> str:
     return content
 
 
-def save_decal(decal: UnrealDecal) -> str:
+def save_decal(decal: UnrealDecalCopy) -> str:
     content = 'Begin Object Class=/Script/Engine.ChildActorComponent '
     content += 'Name="{0}"\n'.format(decal.name)
     content += 'Begin Object Class=/Game/Environment/DEcals/wh_decal_bp.wh_decal_bp_C '
@@ -79,24 +79,20 @@ def save_decal(decal: UnrealDecal) -> str:
 def save_ue4_prefab_data(filename, prefab: Prefab):
     dir = "/Game/Environment/meshes2"
     content = ""
-    json_string = "[\n"
-    for building in prefab.buildings:
-        index = prefab.buildings.index(building)
-        content +=save_static_mesh(convert_building(building, index, dir))
-        unreal_building = convert_building_json(building, index, dir)
-        # json_string += unreal_building.toJSON()
-        # json_string += ","
-    json_string += "\n]"
+    data = []
+    for index, building in enumerate(prefab.buildings):
+        data.append(convert_building(building, index, dir))
+    buildings_dict = {'Name': 'prefab', 'buildings': data}
+    json_string = json.dumps([buildings_dict], default=lambda o: o.__dict__, indent=4)
     save_json(json_string, filename)
-    # save_json(data, filename)
     decal_dir = "/Game/Environment/DEcals/Materials"
     decal_list = []
-    for key, props in prefab.props.items():
-        decals = filter(lambda prop: prop.decal, props)
-        for decal in decals:
-            if decal.key not in decal_list:
-                decal_list.append(decal.key)
-            content +=save_decal(convert_decal(decal, index,decal_dir))
+    # for key, props in prefab.props.items():
+    #     decals = filter(lambda prop: prop.decal, props)
+    #     for decal in decals:
+    #         if decal.key not in decal_list:
+    #             decal_list.append(decal.key)
+    #         content +=save_decal(convert_decal(decal, index,decal_dir))
     print(decal_list)
     save_to_file(content, filename + ".ue4")
 

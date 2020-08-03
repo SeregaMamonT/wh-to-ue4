@@ -1,7 +1,7 @@
 from wh_binary_objects import Building, Prop
 
-from ue4_objects import UnrealStaticMesh, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecal, \
-    UnrealStaticMeshJson, Quaternion, Transform
+from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy, \
+    UnrealStaticMesh, Quaternion, Transform
 
 from app_typing import Matrix, Vector
 
@@ -46,8 +46,8 @@ def get_transforms(transform: Matrix):
     return position, rotation, scale
 
 
-def convert_building(building: Building, index: int, directory: str) -> UnrealStaticMesh:
-    static_mesh = UnrealStaticMesh()
+def convert_building_cope(building: Building, index: int, directory: str) -> UnrealStaticMeshCopy:
+    static_mesh = UnrealStaticMeshCopy()
     static_mesh.name = "{0}_{1}_GEN_VARIABLE".format(building.building_key, index)
     # print(static_mesh.name)
     static_mesh.static_mesh = 'StaticMesh=StaticMesh\'"{0}/{1}.{1}"\''.format(directory, building.building_key)
@@ -59,23 +59,25 @@ def convert_building(building: Building, index: int, directory: str) -> UnrealSt
     return static_mesh
 
 
-def convert_building_json(building: Building, index: int, directory: str) -> UnrealStaticMeshJson:
-    static_mesh = UnrealStaticMeshJson()
-    static_mesh.Name = "{0}_{1}".format(building.building_key, index)
-    # print(static_mesh.name)
-    static_mesh.static_mesh = 'StaticMesh\'{0}/{1}\''.format(directory, building.building_key)
+def convert_building(building: Building, index: int, directory: str) -> UnrealStaticMesh:
+    static_mesh = UnrealStaticMesh()
+    if building.properties.starting_damage_unary < 1:
+        static_mesh.name = "{0}_{1}".format(building.building_key, index)
+        static_mesh.static_mesh = 'StaticMesh\'{0}/{1}\''.format(directory, building.building_key)
+    else:
+        static_mesh.name = "{0}_broken_{1}".format(building.building_key, index)
+        static_mesh.static_mesh = 'StaticMesh\'{0}/{1}_broken\''.format(directory, building.building_key)
     transform = get_transforms(building.transform)
-    static_mesh.transform = Transform
+    static_mesh.transform = Transform()
     static_mesh.transform.Translation = transform[0]
     static_mesh.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
     static_mesh.transform.Scale3D = transform[2]
-    print(static_mesh.Name, static_mesh.transform.Rotation.__dict__)
-
+    #print(static_mesh.__dict__)
     return static_mesh
 
 
-def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecal:
-    unreal_decal = UnrealDecal()
+def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecalCopy:
+    unreal_decal = UnrealDecalCopy()
     temp_string = decal.key.replace('rigidmodels/decals/wood elf/', '')
     temp_string = temp_string.replace('.rigid_model_v2', '')
     s = decal.key[decal.key.rfind('/') + 1:].split('.')[0]

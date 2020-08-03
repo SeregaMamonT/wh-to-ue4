@@ -30,6 +30,18 @@ class RelativeScale3D:
         self.Z = z
 
 
+class HasRelativeLocation:
+    relative_location: RelativeLocation
+
+
+class HasRelativeRotation:
+    relative_rotation: RelativeRotation
+
+
+class HasRelativeScale3D:
+    relative_scale_3d: RelativeScale3D
+
+
 class Transform:
     Translation: RelativeLocation
     Rotation: Quaternion
@@ -39,75 +51,27 @@ class Transform:
 class HasTransform:
     transform: Transform
 
-class HasRelativeLocation:
-    relative_location: RelativeLocation
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-class HasRelativeRotation:
-    relative_rotation: RelativeRotation
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-#class JsonSerrializer:
-
-
-class HasRelativeScale3D:
-    relative_scale_3d: RelativeScale3D
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-
-class HasRelativeLocationJson:
-    location: RelativeLocation
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-class HasRelativeRotationJson:
-    rotation: RelativeRotation
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-class HasRelativeScale3DJson:
-    scale: RelativeScale3D
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
-
-
-class UnrealStaticMesh(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
+class UnrealStaticMeshCopy(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
     name: str
     static_mesh: str
 
 
-class UnrealStaticMeshJson(HasTransform):
-    Name: str
+class UnrealStaticMesh(HasTransform):
+    name: str
     static_mesh: str
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                          sort_keys=True, indent=4)
 
-
-class UnrealDecal(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
+class UnrealDecalCopy(HasRelativeLocation, HasRelativeRotation, HasRelativeScale3D):
     name: str
     material: str
     decal: str
+    tiling: float
+    parallax_scale: float
+
+
+class UnrealDecal(HasTransform):
+    name: str
+    material: str
     tiling: float
     parallax_scale: float
