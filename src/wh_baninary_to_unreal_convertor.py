@@ -1,7 +1,7 @@
-from wh_binary_objects import Building, Prop
+from wh_binary_objects import Building, Prop, Particle
 
 from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy, \
-    UnrealStaticMesh, Quaternion, Transform, UnrealDecal
+    UnrealStaticMesh, Quaternion, Transform, UnrealDecal, UnrealParticle
 
 from app_typing import Matrix, Vector
 
@@ -78,7 +78,21 @@ def convert_decal(decal: Prop, index: int, directory: str) -> UnrealDecal:
     unreal_decal.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
     unreal_decal.transform.Scale3D = transform[2]
     unreal_decal.transform.Scale3D.Z = unreal_decal.transform.Scale3D.X
+
     return unreal_decal
+
+
+def convert_particle(particle: Particle, index: int, directory: str) -> UnrealParticle:
+    unreal_particle = UnrealParticle()
+    unreal_particle.name = "{0}_{1}".format(particle.model_name, index)
+    unreal_particle.particle = "ParticleSystem\'{0}/{1}.{1}\'".format(directory, particle.model_name)
+    transform = get_transforms(particle.transform)
+    unreal_particle.transform = Transform()
+    unreal_particle.transform.Translation = transform[0]
+    unreal_particle.transform.Rotation = to_quaternion(transform[1].X, transform[1].Y, transform[1].Z)
+    unreal_particle.transform.Scale3D = transform[2]
+
+    return unreal_particle
 
 
 # convertor for copy-paste into unreal method

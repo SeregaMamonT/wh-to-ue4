@@ -1,4 +1,5 @@
-from wh_baninary_to_unreal_convertor import convert_building_copy, convert_decal_copy, convert_building, convert_decal
+from wh_baninary_to_unreal_convertor import convert_building_copy, convert_decal_copy, convert_building, convert_decal, \
+    convert_particle
 from enum import Enum
 from terry_savers.xml_saver_utils import s_float
 from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy
@@ -23,9 +24,8 @@ def get_type_saver(type):
         raise Exception('Unsupported save type: ' + str(type))
 
 
-
 def save_json(content, filename):
-    #content = json.dumps(data, indent=4, sort_keys=True)
+    # content = json.dumps(data, indent=4, sort_keys=True)
     save_to_file(content, filename + ".json")
 
 
@@ -92,11 +92,11 @@ def save_decal(decal: UnrealDecalCopy) -> str:
     return content
 
 
-
 def save_ue4_prefab_data(filename, prefab_data: tuple):
     prefab = prefab_data[0]
     dir = "/Game/Environment/meshes2"
     decal_dir = "/Game/Environment/DEcals/Materials"
+    particle_dir = "/Game/Environment/particles"
     content = ""
     buildings_data = []
     for index, building in enumerate(prefab.buildings):
@@ -106,7 +106,10 @@ def save_ue4_prefab_data(filename, prefab_data: tuple):
         decals = filter(lambda prop: prop.decal, props)
         for index, decal in enumerate(decals):
             decal_data.append(convert_decal(decal, index, decal_dir))
-    prefab_dict = {'Name': 'prefab', 'buildings': buildings_data, 'decals': decal_data}
+    particle_data = []
+    for index, particle in enumerate(prefab.particles):
+        particle_data.append(convert_particle(particle, index, particle_dir))
+    prefab_dict = {'Name': 'prefab', 'buildings': buildings_data, 'decals': decal_data, 'particles': particle_data}
     json_string = json.dumps([prefab_dict], default=lambda o: o.__dict__, indent=4)
     save_json(json_string, filename)
     decal_list = []

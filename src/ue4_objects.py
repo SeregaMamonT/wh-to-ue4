@@ -75,3 +75,8 @@ class UnrealDecal(HasTransform):
     material: str
     tiling: float
     parallax_scale: float
+
+
+class UnrealParticle(HasTransform):
+    name: str
+    particle: str
