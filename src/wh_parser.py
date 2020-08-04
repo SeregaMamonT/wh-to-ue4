@@ -72,7 +72,7 @@ def read_prefab(file: BinaryIO, global_context):
         prefab.point_lights = read_point_light_list(file)
         prefab.building_projectile_emitters = read_building_projectile_emitter_list(file)
         prefab.playable_area = read_playable_area(file)
-        # print(prefab.__dict__)
+        #print(print_prefab_stats(prefab))
 
         return prefab
 
@@ -85,7 +85,9 @@ def print_map_stats(map: MapData):
     for i in map.buildings:
         if i.building_key not in buildings:
             buildings.append(i.building_key)
-    print("Buildings: ", len(map.buildings), buildings)
+    print("Buildings: ", len(map.buildings), "Unique: ", len(buildings))
+    for i in buildings:
+        print(i)
     print("Capture locations: ", len(map.capture_locations))
     print("Go outline: ", len(map.go_outlines))
     print("Non terrain outlines: ", len(map.non_terrain_outlines))
@@ -94,7 +96,10 @@ def print_map_stats(map: MapData):
     for i in map.prefab_instances:
         if i.name not in prefabs:
             prefabs.append(i.name)
-    print("Prefabs: ", len(map.prefab_instances), prefabs)
+    prefabs.sort()
+    print("Prefabs: ", len(map.prefab_instances), "Unique: ", len(prefabs))
+    for i in prefabs:
+        print(i)
     props_amount = 0
     for i in map.props.items():
         props_amount = props_amount + len(i)
@@ -102,12 +107,16 @@ def print_map_stats(map: MapData):
     for i in map.props.keys():
         if i not in props:
             props.append(i)
-    print("Props: ", props_amount,  props)
+    print("Props: ", props_amount, "Unique: ", len(props))
+    for i in props:
+        print(i)
     particles = []
     for i in map.particles:
         if i.model_name not in particles:
             particles.append(i.model_name)
-    print("Particles: ", len(map.particles), particles)
+    print("Particles: ", len(map.particles), "Unique: ", len(particles))
+    for i in particles:
+        print(i)
     print("Ai hints: ", "Separators: ", len(map.ai_hints.separators), "Polylines: ",
           len(map.ai_hints.polylines))
     print("Light probes: ", len(map.light_probes))
@@ -116,6 +125,42 @@ def print_map_stats(map: MapData):
     print("Building projectile emitters: ", len(map.building_projectile_emitters))
     print("Spot lights: ", len(map.spot_lights))
     print("Sound shapes: ", len(map.sound_shapes))
+
+
+def print_prefab_stats(prefab: Prefab):
+    buildings = []
+    for i in prefab.buildings:
+        if i.building_key not in buildings:
+            buildings.append(i.building_key)
+    print("Buildings: ", len(prefab.buildings), "Unique: ", len(buildings))
+    for i in buildings:
+        print(i)
+    prefabs = []
+    for i in prefab.prefab_instances:
+        if i.name not in prefabs:
+            prefabs.append(i.name)
+    print("Prefabs: ", len(prefab.prefab_instances), "Unique: ", len(prefabs))
+    for i in prefabs:
+        print(i)
+    props_amount = 0
+    for i in prefab.props.items():
+        props_amount = props_amount + len(i)
+    props = []
+    for i in prefab.props.keys():
+        if i not in props:
+            props.append(i)
+    print("Props: ", props_amount, "Unique: ", len(props))
+    for i in props:
+        print(i)
+    particles = []
+    for i in prefab.particles:
+        if i.model_name not in particles:
+            particles.append(i.model_name)
+    print("Particles: ", len(prefab.particles), "Unique: ", len(particles))
+    for i in particles:
+        print(i)
+
+
 
 @offset_error_logger
 def read_map(file: BinaryIO, global_context):

@@ -8,6 +8,8 @@ from decorators import read_file_error_logger
 from src.matrix import transpose, get_angles_deg_XZY, get_angles_XYZ, degrees_tuple
 from src.wh_parser import read_map, read_prefab, read_prefab_vegetation, read_map_vegetation
 from ue4_saver import save_ue4_prefab_data, ue4_saver, Ue4StructureType
+from statistics import PrefabStats
+
 
 def format_float(x):
     return "{:.5f}".format(x).rstrip("0").strip(".")
@@ -143,14 +145,16 @@ def parse_prefab(prefab_name: str):
 
 
 def parse_prefabs(prefab_names):
+    statistic = PrefabStats()
     for prefab_name in prefab_names:
         print("Prefab " + prefab_name)
         prefab_parsing_data = parse_prefab(prefab_name)
         terry_layer_saver(prefab_name, prefab_parsing_data, StructureType.PREFAB)
         ue4_saver(prefab_name, prefab_parsing_data, Ue4StructureType.PREFAB)
+        statistic.update_stats(prefab_parsing_data)
         #save_ue4_prefab_data(prefab_name, prefab_parsing_data[0])
         print("Prefab and {0} vegetations found".format(len(prefab_parsing_data[1])))
-
+    statistic.print_stats()
 
 def parse_map():
     if path.exists('bmd_data.bin'):
