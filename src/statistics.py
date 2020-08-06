@@ -10,58 +10,46 @@ class PrefabStats:
     vegetation: []
 
     def __init__(self):
-        self.buildings = []
-        self.prefabs = []
-        self.particles = []
-        self.decals = []
-        self.props = []
-        self.vegetation = []
+        self.buildings = set()
+        self.prefabs = set()
+        self.particles = set()
+        self.decals = set()
+        self.props = set()
+        self.vegetation = set()
 
     def update_stats(self, data):
         prefab = data[0]
         vegetation = data[1]
         for building in prefab.buildings:
-            if building.building_key not in self.buildings:
-                self.buildings.append(building.building_key)
+            self.buildings.add(building.building_key)
         for prefab_instance in prefab.prefab_instances:
-            if prefab_instance.name not in self.prefabs:
-                self.prefabs.append(prefab_instance.name)
+            self.prefabs.add(prefab_instance.name)
         for particle in prefab.particles:
-            if particle.model_name not in self.particles:
-                self.particles.append(particle.model_name)
+            self.particles.add(particle.model_name)
         for key, props in prefab.props.items():
             decals = filter(lambda prop: prop.decal, props)
             not_decals = filter(lambda prop: not prop.decal, props)
             for decal in decals:
-                if decal.key not in self.decals:
-                    self.decals.append(decal.key)
+                self.decals.add(decal.key)
             for prop in not_decals:
-                if prop.key not in self.props:
-                    self.props.append(prop.key)
+                self.props.add(prop.key)
         for veg in vegetation:
             for tree in veg.trees:
-                if tree.key not in self.vegetation:
-                    self.vegetation.append(tree.key)
+                self.vegetation.add(tree.key)
 
     def print_stats(self):
         print("Buildings: ", len(self.buildings))
-        for building in self.buildings:
-            print(building)
+        print(*sorted(self.buildings), sep='\n')
         print("Prefabs: ", len(self.prefabs))
-        for prefab in self.prefabs:
-            print(prefab)
+        print(*sorted(self.prefabs), sep='\n')
         print("Particles: ", len(self.particles))
-        for particle in self.particles:
-            print(particle)
+        print(*sorted(self.particles), sep='\n')
         print("Decals: ", len(self.decals))
-        for decal in self.decals:
-            print(decal)
+        print(*sorted(self.decals), sep='\n')
         print("Props: ", len(self.props))
-        for prop in self.props:
-            print(prop)
+        print(*sorted(self.props), sep='\n')
         print("Vegetation: ", len(self.vegetation))
-        for veg in self.vegetation:
-            print(veg)
+        print(*sorted(self.vegetation), sep='\n')
 
 
 
