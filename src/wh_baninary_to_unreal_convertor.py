@@ -105,6 +105,8 @@ def convert_tree(tree: Tree, directory: str) -> List[UnrealStaticMesh]:
         unreal_tree.name = temp_string
         unreal_tree.static_mesh = 'StaticMesh\'{0}/{1}\''.format(directory, temp_string)
         unreal_tree.transform = Transform()
+        unreal_tree.transform.Rotation = Quaternion(0, 0, 0, 1)
+        unreal_tree.transform.Scale3D = RelativeScale3D(tree_prop.scale, tree_prop.scale, tree_prop.scale)
         unreal_tree.transform.Translation = RelativeLocation(-tree_prop.position.x * 100, tree_prop.position.z * 100,
                                                              tree_prop.position.y * 100)
         unreal_tree_list.append(unreal_tree)
