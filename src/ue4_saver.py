@@ -1,5 +1,5 @@
 from wh_baninary_to_unreal_convertor import convert_building_copy, convert_decal_copy, convert_building, convert_decal, \
-    convert_particle
+    convert_particle, convert_tree
 from enum import Enum
 from terry_savers.xml_saver_utils import s_float
 from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy
@@ -94,6 +94,7 @@ def save_decal(decal: UnrealDecalCopy) -> str:
 
 def save_ue4_prefab_data(filename, prefab_data: tuple):
     prefab = prefab_data[0]
+    vegetation = prefab_data[1]
     dir = "/Game/Environment/meshes2"
     decal_dir = "/Game/Environment/DEcals/Materials"
     particle_dir = "/Game/Environment/particles"
@@ -109,7 +110,14 @@ def save_ue4_prefab_data(filename, prefab_data: tuple):
     particle_data = []
     for index, particle in enumerate(prefab.particles):
         particle_data.append(convert_particle(particle, index, particle_dir))
-    prefab_dict = {'Name': 'prefab', 'buildings': buildings_data, 'decals': decal_data, 'particles': particle_data}
+    vegetation_data = []
+    for veg in vegetation:
+        for tree in veg.trees:
+            veg_temp_list = convert_tree(tree, dir)
+            for veg_data in veg_temp_list:
+                vegetation_data.append(veg_data)
+    prefab_dict = {'Name': 'prefab', 'buildings': buildings_data, 'decals': decal_data, 'particles': particle_data,
+                   'vegetation': vegetation_data}
     json_string = json.dumps([prefab_dict], default=lambda o: o.__dict__, indent=4)
     save_json(json_string, filename)
     decal_list = []

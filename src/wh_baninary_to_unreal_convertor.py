@@ -1,4 +1,4 @@
-from wh_binary_objects import Building, Prop, Particle
+from wh_binary_objects import Building, Prop, Particle, Tree
 
 from ue4_objects import UnrealStaticMeshCopy, RelativeLocation, RelativeRotation, RelativeScale3D, UnrealDecalCopy, \
     UnrealStaticMesh, Quaternion, Transform, UnrealDecal, UnrealParticle
@@ -8,7 +8,7 @@ from app_typing import Matrix, Vector
 from wh_binary_to_terry_convertor import mod_vector, unscale
 
 from matrix import transpose, get_angles_XZY_new, degrees
-
+from typing import List
 from math import cos, sin, radians
 
 
@@ -93,6 +93,23 @@ def convert_particle(particle: Particle, index: int, directory: str) -> UnrealPa
     unreal_particle.transform.Scale3D = transform[2]
 
     return unreal_particle
+
+
+def convert_tree(tree: Tree, directory: str) -> List[UnrealStaticMesh]:
+    unreal_tree_list = []
+    for tree_prop in tree.props:
+        unreal_tree = UnrealStaticMesh()
+        temp_string = tree.key.replace('BattleTerrain/vegetation/', '')
+        temp_string = temp_string.replace('.rigid_model_v2', '')
+        # unreal_tree.name = temp_string
+        unreal_tree.name = temp_string
+        unreal_tree.static_mesh = 'StaticMesh\'{0}/{1}\''.format(directory, temp_string)
+        unreal_tree.transform = Transform()
+        unreal_tree.transform.Translation = RelativeLocation(-tree_prop.position.x * 100, tree_prop.position.z * 100,
+                                                             tree_prop.position.y * 100)
+        unreal_tree_list.append(unreal_tree)
+
+    return unreal_tree_list
 
 
 # convertor for copy-paste into unreal method
