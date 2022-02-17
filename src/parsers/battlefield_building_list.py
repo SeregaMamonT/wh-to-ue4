@@ -49,8 +49,10 @@ def read_building_v11(file):
     building.properties = building_property_versions.get_reader(property_version)(file)
 
     building.height_mode = string(file)
-
-    print(building.__dict__)
+    print(building.height_mode)
+    #print(building.__dict__)
+    # extra 8 bytes in the end of building
+    file.read(8)
     return building
 
 buildings_versions = VersionHolder('Building', {
@@ -81,7 +83,15 @@ def read_building_property_v4(file):
 
     return building_property
 
+def read_building_property_v11(file):
+    building_property = BuildingProperty()
+    # need to wait untill Assembly Kit release, have no idea about those flags. It has 5 extra byte compared to
+    # version 4.
+    file.read(21)
+
+    return building_property
 
 building_property_versions = VersionHolder('Building propery', {
     4: read_building_property_v4,
+    11: read_building_property_v11
 })

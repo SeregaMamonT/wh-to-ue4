@@ -79,7 +79,13 @@ def read_prefab(file: BinaryIO, global_context):
         print(root_version, 'in progress')
         prefab = Prefab()
         prefab.buildings = read_building_list(file)
-
+        read_building_list_far(file)
+        prefab.capture_locations = read_capture_location_set(file)
+        read_ef_line_list(file)
+        prefab.go_outlines = read_go_outlines(file)
+        prefab.non_terrain_outlines = read_non_terrain_outlines(file)
+        prefab.zones_templates = read_zones_template_list(file)
+        prefab.prefab_instances = read_prefab_instance_list(file)
         #print(print_prefab_stats(prefab))
 
 
