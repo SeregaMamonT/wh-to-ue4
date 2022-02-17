@@ -30,12 +30,32 @@ def read_building_v8(file):
 
     building.height_mode = string(file)
 
-    # print(building.__dict__)
+    #print(building.__dict__)
     return building
 
+def read_building_v11(file):
+    building = Building()
+    building.flags = {}
+    building.building_id = string(file)
+    building.parent_id = int2(file)
+    some_unknown_flag = int2(file)
+    building.building_key = string(file)
+    print(building.building_key)
+    building.position_type = string(file)
+    print(building.position_type)
+    building.transform = read_transform_n_x_m(file, 4, 3)
+    print(building.transform)
+    property_version = int2(file)
+    building.properties = building_property_versions.get_reader(property_version)(file)
+
+    building.height_mode = string(file)
+
+    print(building.__dict__)
+    return building
 
 buildings_versions = VersionHolder('Building', {
     8: read_building_v8,
+    11: read_building_v11
 })
 
 

@@ -150,11 +150,11 @@ def parse_prefabs(prefab_names):
         print("Prefab " + prefab_name)
         prefab_parsing_data = parse_prefab(prefab_name)
         terry_layer_saver(prefab_name, prefab_parsing_data, StructureType.PREFAB)
-        ue4_saver(prefab_name, prefab_parsing_data, Ue4StructureType.PREFAB)
+        #ue4_saver(prefab_name, prefab_parsing_data, Ue4StructureType.PREFAB)
         statistic.update_stats(prefab_parsing_data)
         #save_ue4_prefab_data(prefab_name, prefab_parsing_data[0])
         print("Prefab and {0} vegetations found".format(len(prefab_parsing_data[1])))
-    # statistic.print_stats()
+     #statistic.print_stats()
 
 def parse_map():
     if path.exists('bmd_data.bin'):

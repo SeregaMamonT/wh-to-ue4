@@ -75,6 +75,13 @@ def read_prefab(file: BinaryIO, global_context):
         #print(print_prefab_stats(prefab))
 
         return prefab
+    if root_version == 26:
+        print(root_version, 'in progress')
+        prefab = Prefab()
+        prefab.buildings = read_building_list(file)
+
+        #print(print_prefab_stats(prefab))
+
 
     else:
         raise Exception('Only versions 23, 24 of root are supported')
